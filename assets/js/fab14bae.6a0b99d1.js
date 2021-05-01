@@ -1,0 +1,1 @@
+(self.webpackChunk_xr3ngine_docs=self.webpackChunk_xr3ngine_docs||[]).push([[2630],{58042:function(s){"use strict";s.exports=JSON.parse('{"allTagsPath":"/xr3ngine/tree/dev/packages/docs/blog/tags","slug":"docusaurus","name":"docusaurus","count":3,"permalink":"/xr3ngine/tree/dev/packages/docs/blog/tags/docusaurus"}')}}]);
