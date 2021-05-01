@@ -1,1 +1,0 @@
-(self.webpackChunk_xr3ngine_docs=self.webpackChunk_xr3ngine_docs||[]).push([[2458],{191:function(e){"use strict";e.exports=JSON.parse('{"allTagsPath":"/xr3ngine/tree/dev/packages/docs/blog/tags","slug":"facebook","name":"facebook","count":1,"permalink":"/xr3ngine/tree/dev/packages/docs/blog/tags/facebook"}')}}]);

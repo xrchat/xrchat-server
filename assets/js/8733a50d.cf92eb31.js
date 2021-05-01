@@ -1,1 +1,0 @@
-(self.webpackChunk_xr3ngine_docs=self.webpackChunk_xr3ngine_docs||[]).push([[96305],{13227:function(e){"use strict";e.exports=JSON.parse('{"permalink":"/xr3ngine/tree/dev/packages/docs/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":3,"previousPage":null,"nextPage":null,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);

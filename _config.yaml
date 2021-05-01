@@ -1,0 +1,10 @@
+title: Our XR3ngine Helm chart repo
+description: A chart repo for storing charts.
+theme: minima
+url: "https://helm.xrengine.io"
+repo_name: xr3ngine
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - .gitignore
