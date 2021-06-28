@@ -141,6 +141,91 @@ const UserTable = (props: Props) => {
   })
 
   const count = rows.size ? rows.size : rows.length
+    return (
+        <div className={classes.root}>
+            <TableContainer className={classes.container}>
+                <Table stickyHeader aria-label="sticky table">
+                    <TableHead>
+                        <TableRow >
+                            {columns.map((column) => (
+                                <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                    style={{ minWidth: column.minWidth }}
+                                    className={classx.tableCellHeader}
+                                >
+                                    {column.label}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, id) => {
+                            return (
+                                <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                    {columns.map((column) => {
+                                        const value = row[column.id];
+                                        return (
+                                            <TableCell
+                                                key={column.id}
+                                                align={column.align}
+                                                className={classx.tableCellBody}
+                                            >
+                                                {value}
+                                            </TableCell>
+                                        );
+                                    })}
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={[12]}
+                component="div"
+                count={count || 12}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+                className={classx.tableFooter}
+            />
+            <Dialog
+                open={popConfirmOpen}
+                onClose={() => setPopConfirmOpen(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                classes={{ paper: classes.paperDialog }}
+            >
+                <DialogTitle id="alert-dialog-title">Confirm to delete this user!</DialogTitle>
+                <DialogActions>
+                    <Button onClick={() => setPopConfirmOpen(false)} className={classes.spanNone}>
+                        Cancel
+                    </Button>
+                    <Button
+                        className={classes.spanDange}
+                        onClick={async () => {
+                            await removeUserAdmin(userId);
+                            setPopConfirmOpen(false);
+                        }}
+                        autoFocus
+                    >
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            {
+                userAdmin &&
+                <ViewUser
+                    openView={viewModel}
+                    userAdmin={userAdmin}
+                    closeViewModel={closeViewModel}
+                />
+            }
+        </div>
+    );
+};
 
   return (
     <div className={classes.root}>
