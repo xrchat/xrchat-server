@@ -1,8 +1,8 @@
-import AdminConsole from '@xrengine/client-core/src/admin/components'
-import { doLoginAuto } from '@xrengine/client-core/src/user/reducers/auth/service'
-import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators, Dispatch } from 'redux'
+import AdminConsole from '@xrengine/client-core/src/admin/components/Location';
+import { doLoginAuto } from "@xrengine/client-core/src/user/reducers/auth/service";
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
 
 interface Props {
   doLoginAuto?: any
