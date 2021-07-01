@@ -70,5 +70,6 @@ export interface Props {
     adminLocationState?: any;
     adminUserState?: any;
     adminInstanceState?: any;
-    adminSceneState?: any
+    adminSceneState?: any;
+    removeLocation?: any;
 }

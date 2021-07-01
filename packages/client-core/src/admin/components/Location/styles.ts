@@ -76,6 +76,16 @@ export const useStyles = makeStyles((theme: Theme) =>
             background: "#343b41",
             color: "#f1f1f1 !important"
           },
+          paperDialog: {
+            background: "rgb(58, 65, 73) !important",
+            color: "#f1f1f1"
+        },
+        spanDange: {
+            color: "#FF8C00"
+        },
+        spanNone: {
+            color: "#808080"
+        },
     }));
 
 

@@ -26,7 +26,14 @@ import { columns, Props } from "./variable";
 import Chip from '@material-ui/core/Chip';
 import Avatar from '@material-ui/core/Avatar';
 import TablePagination from '@material-ui/core/TablePagination';
-
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
+import {
+    removeLocation
+} from "../../reducers/admin/location/service";
+import ViewLocation from "./ViewLocation";
 
 const mapStateToProps = (state: any): any => {
     return {
@@ -44,7 +51,8 @@ const mapDispatchToProps = (dispatch: Dispatch): any => ({
     fetchAdminScenes: bindActionCreators(fetchAdminScenes, dispatch),
     fetchLocationTypes: bindActionCreators(fetchLocationTypes, dispatch),
     fetchUsersAsAdmin: bindActionCreators(fetchUsersAsAdmin, dispatch),
-    fetchAdminInstances: bindActionCreators(fetchAdminInstances, dispatch)
+    fetchAdminInstances: bindActionCreators(fetchAdminInstances, dispatch),
+    removeLocation: bindActionCreators(removeLocation, dispatch)
 });
 
 const LocationTable = (props: Props) => {
@@ -60,10 +68,15 @@ const LocationTable = (props: Props) => {
         adminLocationState,
         adminUserState,
         adminInstanceState,
-        adminSceneState
+        adminSceneState,
+        removeLocation
     } = props;
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(12);
+    const [popConfirmOpen, setPopConfirmOpen] = React.useState(false);
+    const [locationId, setLocationId] = React.useState("");
+    const [viewModel, setViewModel] = React.useState(false);
+    const [locationAdmin, setLocationAdmin] = React.useState("");
     const user = authState.get('user');
     const adminLocations = adminLocationState.get('locations').get('locations');
     const adminLocationCount = adminLocationState.get('locations').get('total');
@@ -101,9 +114,24 @@ const LocationTable = (props: Props) => {
         }
     }, [authState, adminSceneState, adminInstanceState, adminLocationState]);
 
+    const openViewModel = (open: boolean, location: any) =>
+        (
+            event: React.KeyboardEvent | React.MouseEvent,
+        ) => {
+            if (
+                event.type === 'keydown' &&
+                ((event as React.KeyboardEvent).key === 'Tab' ||
+                    (event as React.KeyboardEvent).key === 'Shift')
+            ) {
+                return;
+            }
+            setLocationAdmin(location);
+            setViewModel(open);
+        };
 
-    const createData = (id: string, name: string, sceneId: string, maxUsersPerInstance: string, type: string, tags: any, instanceMediaChatEnabled: ReactElement<any, any>, videoEnabled: ReactElement<any, any>) => {
+    const createData = (el: any, id: string, name: string, sceneId: string, maxUsersPerInstance: string, type: string, tags: any, instanceMediaChatEnabled: ReactElement<any, any>, videoEnabled: ReactElement<any, any>) => {
         return {
+            el,
             id,
             name,
             sceneId,
@@ -114,8 +142,8 @@ const LocationTable = (props: Props) => {
             videoEnabled,
             action: (
                 <>
-                    <a href="#h" className={classex.actionStyle} ><span className={classex.spanWhite}>View</span></a>
-                    <a href="#h" className={classex.actionStyle} > <span className={classex.spanDange}>Delete</span> </a>
+                    <a href="#h" className={classex.actionStyle} onClick={openViewModel(true, el)}><span className={classex.spanWhite}>View</span></a>
+                    <a href="#h" className={classex.actionStyle} onClick={() => { setPopConfirmOpen(true); setLocationId(id); }} > <span className={classex.spanDange}>Delete</span> </a>
                 </>
             )
         };
@@ -124,7 +152,9 @@ const LocationTable = (props: Props) => {
 
     const rows = adminLocations.map(el => {
         return createData(
-            el.id, el.name,
+            el,
+            el.id,
+            el.name,
             el.sceneId,
             el.maxUsersPerInstance,
             el.slugifiedName,
@@ -199,6 +229,35 @@ const LocationTable = (props: Props) => {
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
                 className={classex.tableFooter}
+            />
+            <Dialog
+                open={popConfirmOpen}
+                onClose={() => setPopConfirmOpen(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                classes={{ paper: classes.paperDialog }}
+            >
+                <DialogTitle id="alert-dialog-title">Confirm to delete this location!</DialogTitle>
+                <DialogActions>
+                    <Button onClick={() => setPopConfirmOpen(false)} className={classes.spanNone}>
+                        Cancel
+                    </Button>
+                    <Button
+                        className={classes.spanDange}
+                        onClick={async () => {
+                            await removeLocation(locationId);
+                            setPopConfirmOpen(false);
+                        }}
+                        autoFocus
+                    >
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <ViewLocation
+                openView={viewModel}
+                closeViewModel={openViewModel}
             />
         </div>
     )
