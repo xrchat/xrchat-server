@@ -258,6 +258,7 @@ const LocationTable = (props: Props) => {
             <ViewLocation
                 openView={viewModel}
                 closeViewModel={openViewModel}
+                locationAdmin={locationAdmin}
             />
         </div>
     )

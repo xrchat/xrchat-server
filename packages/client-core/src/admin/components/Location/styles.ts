@@ -86,6 +86,12 @@ export const useStyles = makeStyles((theme: Theme) =>
         spanNone: {
             color: "#808080"
         },
+        rootPaper: {
+            height: "20vh",
+            background: "#111",
+            color: "#f1f1f1",
+            backgroundColor: "#343b41",
+          }
     }));
 
 
