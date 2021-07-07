@@ -75,8 +75,8 @@ export const useStyles = makeStyles((theme: Theme) =>
             marginBottom: "15px",
             background: "#343b41",
             color: "#f1f1f1 !important"
-          },
-          paperDialog: {
+        },
+        paperDialog: {
             background: "rgb(58, 65, 73) !important",
             color: "#f1f1f1"
         },
@@ -87,11 +87,58 @@ export const useStyles = makeStyles((theme: Theme) =>
             color: "#808080"
         },
         rootPaper: {
-            height: "20vh",
+            height: "21vh",
             background: "#111",
             color: "#f1f1f1",
             backgroundColor: "#343b41",
-          }
+        },
+        locationTitle: {
+            margin: "50px auto",
+            width: "300px",
+            border: "1px solid #f1f1f1",
+            textAlign: "center",
+        },
+        locationSubTitle:{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+        },
+        locationOtherInfo: {
+            marginBottom: "3px",
+            fontSize: "1.2rem"
+        },
+        mb10: {
+            marginBottom: "10%",
+        },
+        mb20px: {
+            marginBottom: "20px"
+        },
+        pdl: {
+            paddingLeft: "1rem"
+        },
+        smpd:{
+            padding: "2px",
+        },
+        spacing:{
+            padding: "0.5rem",
+            marginTop:"5%"
+        },
+        middlePaper:{
+            color: "#f1f1f1",
+            padding: "10px",
+            background: "#15171B"
+        },
+        saveBtn: {
+            marginLeft: "auto",
+            background: "#43484F !important",
+            color: "#fff !important",
+            width: "150px",
+            marginRight: "25px",
+            boxShadow: "0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%) !important",
+        },
+        btnContainer:{
+            padding: "2rem"
+        },
     }));
 
 
