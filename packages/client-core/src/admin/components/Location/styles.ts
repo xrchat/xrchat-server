@@ -95,7 +95,6 @@ export const useStyles = makeStyles((theme: Theme) =>
         locationTitle: {
             margin: "50px auto",
             width: "300px",
-            border: "1px solid #f1f1f1",
             textAlign: "center",
         },
         locationSubTitle:{
@@ -103,12 +102,17 @@ export const useStyles = makeStyles((theme: Theme) =>
             justifyContent: "space-between",
             alignItems: "center"
         },
+        mb:{
+            marginBottom: "10px",
+        },
         locationOtherInfo: {
-            marginBottom: "3px",
             fontSize: "1.2rem"
         },
+        typo:{
+            lineHeight: "1rem"
+        },
         mb10: {
-            marginBottom: "10%",
+            marginBottom: "5%",
         },
         mb20px: {
             marginBottom: "20px"
@@ -120,13 +124,14 @@ export const useStyles = makeStyles((theme: Theme) =>
             padding: "2px",
         },
         spacing:{
-            padding: "0.5rem",
+            paddingLeft: "2.5rem",
             marginTop:"5%"
         },
         middlePaper:{
             color: "#f1f1f1",
-            padding: "10px",
-            background: "#15171B"
+            padding: "20px 0 0 20px",
+            background: "#15171B",
+            height: "10rem"
         },
         saveBtn: {
             marginLeft: "auto",
@@ -139,6 +144,12 @@ export const useStyles = makeStyles((theme: Theme) =>
         btnContainer:{
             padding: "2rem"
         },
+        pdlarge:{
+            paddingLeft: "3rem"
+        },
+        mt10: {
+            marginTop: "10%"
+        },
     }));
 
 
@@ -147,6 +158,7 @@ export const useStyle = makeStyles({
         width: "40%",
         backgroundColor: "#43484F",
         color: "#f1f1f1",
+        overflow: "hidden"
     },
     actionStyle: {
         textDecoration: "none",
