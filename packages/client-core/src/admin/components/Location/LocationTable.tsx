@@ -79,11 +79,6 @@ const LocationTable = (props: Props) => {
     const [locationAdmin, setLocationAdmin] = React.useState("");
     const user = authState.get('user');
     const adminLocations = adminLocationState.get('locations').get('locations');
-    const adminLocationCount = adminLocationState.get('locations').get('total');
-    const adminUsers = adminUserState.get('users').get('users');
-    const adminUserCount = adminUserState.get('users').get('total');
-    const adminInstances = adminInstanceState.get('instances').get('instances');
-    const adminInstanceCount = adminInstanceState.get('instances').get('total');
     const { t } = useTranslation();
 
     const handleChangePage = (event: unknown, newPage: number) => {
