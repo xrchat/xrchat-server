@@ -19,13 +19,19 @@ import Select from '@material-ui/core/Select';
 import { selectAdminSceneState } from "../../reducers/admin/scene/selector";
 import { connect } from 'react-redux';
 import { selectAdminLocationState } from "../../reducers/admin/location/selector";
+import { formValid } from "../Users/validation";
+import { patchLocation } from "../../reducers/admin/location/service"
+import { bindActionCreators, Dispatch } from 'redux';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 
 interface Props {
     openView: any;
     closeViewModel: any;
     locationAdmin: any;
-    adminSceneState: any;
-    adminLocationState: any;
+    adminSceneState?: any;
+    adminLocationState?: any;
+    patchLocation?: any;
 }
 
 const mapStateToProps = (state: any): any => {
@@ -35,8 +41,16 @@ const mapStateToProps = (state: any): any => {
     }
 }
 
+const mapDispatchToProps = (dispatch: Dispatch): any => ({
+    patchLocation: bindActionCreators(patchLocation, dispatch)
+});
+
+const Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
+
 const ViewLocation = (props: Props) => {
-    const { openView, closeViewModel, adminSceneState, adminLocationState, locationAdmin } = props;
+    const { openView, closeViewModel, adminSceneState, adminLocationState, patchLocation, locationAdmin } = props;
     const classex = useStyle();
     const classes = useStyles();
     const [editMode, setEditMode] = React.useState(false)
@@ -57,6 +71,8 @@ const ViewLocation = (props: Props) => {
         }
     });
     const [location, setLocation] = React.useState<any>("");
+    const [error, setError] = React.useState("");
+    const [openWarning, setOpenWarning] = React.useState(false);
     const { t } = useTranslation();
     const adminScenes = adminSceneState.get('scenes').get('scenes');
     const locationTypes = adminLocationState.get('locationTypes').get('locationTypes');
@@ -64,17 +80,102 @@ const ViewLocation = (props: Props) => {
     React.useEffect(() => {
         if (locationAdmin) {
             setLocation(locationAdmin);
+            setState({
+                ...state, name: locationAdmin.name,
+                maxUsers: locationAdmin.maxUsersPerInstance,
+                scene: locationAdmin.sceneId,
+                type: locationAdmin.location_setting.locationType
+            })
         }
     }, [locationAdmin]);
-    console.log('====================================');
-    console.log(location);
-    console.log('====================================');
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        let temp = state.formErrors;
+        switch (name) {
+            case "name":
+                temp.name = value.length < 2 ? "Name is required!" : "";
+                break;
+            case "maxUsers":
+                temp.maxUsers = value.length < 2 ? "Max users is required!" : "";
+                break;
+            case "scene":
+                temp.scene = value.length < 2 ? "Scene is required!" : "";
+                break;
+            case "private":
+                temp.type = value.length < 2 ? "Private role is required!" : "";
+                break;
+            default:
+                break;
+        }
+        setState({ ...state, [name]: value, formErrors: temp });
+    };
+
+    const handleSubmit = () => {
+        const locationData = {
+            name: state.name,
+            maxUsersPerInstance: state.maxUsers,
+            sceneId: state.scene,
+            location_setting: {
+                locationType: state.type,
+                instanceMediaChatEnabled: location.location_setting.globalMediaEnabled,
+                videoEnabled: location.location_setting.videoEnabled
+            },
+            isLobby: location.isLobby,
+            isFeatured: location.isFeatured
+        };
+
+        let temp = state.formErrors;
+        if (!state.name) {
+            temp.name = "Name can't be empty";
+        }
+        if (!state.maxUsers) {
+            temp.maxUsers = "Maximum users can't be empty";
+        }
+        if (!state.scene) {
+            temp.scene = "Scene can't be empty"
+        }
+        if (!state.type) {
+            temp.scene = "Type can't be empty"
+        }
+        setState({ ...state, formErrors: temp });
+        if (formValid(state, state.formErrors)) {
+            patchLocation(location.id, locationData);
+            setState({
+                ...state,
+                name: "",
+                maxUsers: 10,
+                type: "",
+                scene: "",
+            });
+            setEditMode(false);
+            closeViewModel(false);
+        } else {
+            setError("Please fill all required field");
+            setOpenWarning(true);
+        }
+    };
+
+    const handleCloseWarning = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenWarning(false);
+    };
+
+    const handleCloseDrawe = () => {
+        setError("");
+        setOpenWarning(false);
+        closeViewModel(false);
+        setState({...state, formErrors: { ...state.formErrors, name: "", maxUsers: "", scene: "", type: ""}})
+    }
+
     return (
         <React.Fragment>
             <Drawer
                 anchor="right"
                 open={openView}
-                onClose={closeViewModel(false)}
+                onClose={()=> handleCloseDrawe()}
                 classes={{ paper: classex.paper }}
             >
                 <Paper elevation={0} className={classes.rootPaper} >
@@ -118,7 +219,7 @@ const ViewLocation = (props: Props) => {
                                 style={{ color: "#fff" }}
                                 autoComplete="off"
                                 value={state.name}
-                            // onChange={handleInputChange}
+                                onChange={handleInputChange}
                             />
                         </Paper>
                         <label>Max Users</label>
@@ -134,7 +235,7 @@ const ViewLocation = (props: Props) => {
                                 autoComplete="off"
                                 type="number"
                                 value={state.maxUsers}
-                            // onChange={handleChange}
+                                onChange={handleInputChange}
                             />
                         </Paper>
 
@@ -147,7 +248,7 @@ const ViewLocation = (props: Props) => {
                                     value={state.scene}
                                     fullWidth
                                     displayEmpty
-                                    //onChange={handleChange}
+                                    onChange={handleInputChange}
                                     className={classes.select}
                                     name="scene"
                                     MenuProps={{ classes: { paper: classex.selectPaper } }}
@@ -170,7 +271,7 @@ const ViewLocation = (props: Props) => {
                                     value={state.type}
                                     fullWidth
                                     displayEmpty
-                                   // onChange={handleChange}
+                                    onChange={handleInputChange}
                                     className={classes.select}
                                     name="type"
                                     MenuProps={{ classes: { paper: classex.selectPaper } }}
@@ -223,9 +324,9 @@ const ViewLocation = (props: Props) => {
                 <DialogActions className={classes.mb10}>
                     {
                         editMode ?
-                            <div>
+                            <div className={classes.marginTpM}>
                                 <Button
-                                    // onClick={handleSubmit}
+                                    onClick={handleSubmit}
                                     className={classes.saveBtn}
                                 >
                                     <span style={{ marginRight: "15px" }}><Save /></span> Submit
@@ -240,7 +341,7 @@ const ViewLocation = (props: Props) => {
                                 </Button>
                             </div>
                             :
-                            <div>
+                            <div className={classes.marginTpM}>
                                 <Button
                                     className={classes.saveBtn}
                                     onClick={() => {
@@ -249,7 +350,7 @@ const ViewLocation = (props: Props) => {
                                     EDIT
                                 </Button>
                                 <Button
-                                    onClick={closeViewModel(false)}
+                                    onClick={()=> handleCloseDrawe()}
                                     className={classes.saveBtn}
                                 >
                                     CANCEL
@@ -257,10 +358,17 @@ const ViewLocation = (props: Props) => {
                             </div>
                     }
                 </DialogActions>
-
+                <Snackbar
+                    open={openWarning}
+                    autoHideDuration={6000}
+                    onClose={handleCloseWarning}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+                    <Alert onClose={handleCloseWarning} severity="warning"> {error} </Alert>
+                </Snackbar>
             </Drawer>
         </React.Fragment>
     )
 }
 
-export default connect(mapStateToProps, null)(ViewLocation)
+export default connect(mapStateToProps, mapDispatchToProps)(ViewLocation)

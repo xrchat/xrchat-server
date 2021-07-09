@@ -129,6 +129,10 @@ const LocationTable = (props: Props) => {
             setViewModel(open);
         };
 
+        const closeViewModel = (open) => {
+            setViewModel(open);
+        };
+        
     const createData = (el: any, id: string, name: string, sceneId: string, maxUsersPerInstance: string, type: string, tags: any, instanceMediaChatEnabled: ReactElement<any, any>, videoEnabled: ReactElement<any, any>) => {
         return {
             el,
@@ -226,8 +230,8 @@ const LocationTable = (props: Props) => {
                 count={12}
                 rowsPerPage={rowsPerPage}
                 page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
                 className={classex.tableFooter}
             />
             <Dialog
@@ -257,7 +261,7 @@ const LocationTable = (props: Props) => {
 
             <ViewLocation
                 openView={viewModel}
-                closeViewModel={openViewModel}
+                closeViewModel={closeViewModel}
                 locationAdmin={locationAdmin}
             />
         </div>

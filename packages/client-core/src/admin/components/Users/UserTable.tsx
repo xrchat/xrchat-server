@@ -187,8 +187,8 @@ const UserTable = (props: Props) => {
                 count={count || 12}
                 rowsPerPage={rowsPerPage}
                 page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
                 className={classx.tableFooter}
             />
             <Dialog

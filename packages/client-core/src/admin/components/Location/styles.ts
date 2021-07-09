@@ -24,6 +24,9 @@ export const useStyles = makeStyles((theme: Theme) =>
         marginTp: {
             marginTop: "20%"
         },
+        marginTpM: {
+            marginTop: "10%"
+        },
         createInput: {
             padding: '2px 4px',
             display: 'flex',
