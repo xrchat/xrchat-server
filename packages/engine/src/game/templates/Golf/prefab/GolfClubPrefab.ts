@@ -5,7 +5,7 @@ import { TransformComponent } from '../../../../transform/components/TransformCo
 import { ColliderComponent } from '../../../../physics/components/ColliderComponent';
 import { RigidBodyComponent } from '../../../../physics/components/RigidBody';
 import { initializeNetworkObject } from '../../../../networking/functions/initializeNetworkObject';
-import { GolfCollisionGroups, GolfPrefabTypes } from '../GolfGameConstants';
+import { GolfCollisionGroups, GolfPrefabTypes, GolfColors } from '../GolfGameConstants';
 import { BoxBufferGeometry, DoubleSide, Group, Material, Mesh, MeshStandardMaterial, Quaternion, Vector3, MathUtils } from 'three';
 import { Body, BodyType, ColliderHitEvent, ShapeType, RaycastQuery, SceneQueryType, SHAPES } from 'three-physx';
 import { CollisionGroups } from '../../../../physics/enums/CollisionGroups';
@@ -48,8 +48,9 @@ export const spawnClub: Behavior = (entityPlayer: Entity, args?: any, delta?: nu
 
   const game = getGame(entityPlayer);
   const playerNetworkObject = getComponent(entityPlayer, NetworkObject);
-
-  console.log('spawning club for player', playerNetworkObject.ownerId)
+  /*console.log(playerNetworkObject);
+  console.log(playerNetworkObject.entity.gamePlayer.role);
+  console.log('spawning club for player', playerNetworkObject.ownerId);*/
 
   const networkId = Network.getNetworkId();
   const uuid = MathUtils.generateUUID();
@@ -217,17 +218,19 @@ export const initializeGolfClub = (entityClub: Entity) => {
     collisionMask: CollisionGroups.Default | CollisionGroups.Ground,
   }));
 
-  const handleObject = new Mesh(new BoxBufferGeometry(clubHalfWidth, clubHalfWidth, 0.25), new MeshStandardMaterial({ color: 0xff2126, transparent: true }));
+  const golfClubColor = GolfColors.red;
+
+  const handleObject = new Mesh(new BoxBufferGeometry(clubHalfWidth, clubHalfWidth, 0.25), new MeshStandardMaterial({ color: golfClubColor, transparent: true })); // Previous color: 0xff2126
   golfClubComponent.handleObject = handleObject;
 
   const headGroup = new Group();
-  const headObject = new Mesh(new BoxBufferGeometry(clubHalfWidth, clubHalfWidth, clubPutterLength * 2), new MeshStandardMaterial({ color: 0x2126ff , transparent: true }));
+  const headObject = new Mesh(new BoxBufferGeometry(clubHalfWidth, clubHalfWidth, clubPutterLength * 2), new MeshStandardMaterial({ color: golfClubColor , transparent: true })); // Previous color: 0x2126ff
   // raise the club by half it's height and move it out by half it's length so it's flush to ground and attached at end
   headObject.position.set(0, clubHalfWidth, - (clubPutterLength * 0.5));
   headGroup.add(headObject);
   golfClubComponent.headGroup = headGroup;
 
-  const neckObject = new Mesh(new BoxBufferGeometry(clubHalfWidth * 0.5, clubHalfWidth * 0.5, -1.75), new MeshStandardMaterial({ color: 0x21ff26, transparent: true, side: DoubleSide }));
+  const neckObject = new Mesh(new BoxBufferGeometry(clubHalfWidth * 0.5, clubHalfWidth * 0.5, -1.75), new MeshStandardMaterial({ color: golfClubColor, transparent: true, side: DoubleSide })); // Previous color: 0x21ff26
   golfClubComponent.neckObject = neckObject;
 
   const meshGroup = new Group();

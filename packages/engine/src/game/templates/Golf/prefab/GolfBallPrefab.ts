@@ -1,5 +1,5 @@
 
-import { Group, MathUtils, Mesh, Vector3 } from 'three';
+import { Group, MathUtils, Mesh, MeshPhongMaterial, Vector3, BufferGeometry } from 'three';
 import { Body, BodyType, ShapeType, SHAPES } from 'three-physx';
 import { AssetLoader } from '../../../../assets/classes/AssetLoader';
 import { isClient } from '../../../../common/functions/isClient';
@@ -20,8 +20,9 @@ import { PhysicsSystem } from '../../../../physics/systems/PhysicsSystem';
 import { Object3DComponent } from '../../../../scene/components/Object3DComponent';
 import { TransformComponent } from '../../../../transform/components/TransformComponent';
 import { GameObject } from '../../../components/GameObject';
+import { GamePlayer } from '../../../components/GamePlayer';
 import { getGame } from '../../../functions/functions';
-import { GolfCollisionGroups, GolfPrefabTypes } from '../GolfGameConstants';
+import { GolfCollisionGroups, GolfPrefabTypes, GolfColors } from '../GolfGameConstants';
 
 /**
  * @author Josh Field <github.com/HexaField>
@@ -29,12 +30,17 @@ import { GolfCollisionGroups, GolfPrefabTypes } from '../GolfGameConstants';
 
 export const spawnBall: Behavior = (entityPlayer: Entity, args?: any, delta?: number, entityTarget?: Entity, time?: number, checks?: any): void => {
   // server sends clients the entity data
+  const gamePlayerObject = getComponent(entityPlayer, GamePlayer);
+  console.log(gamePlayerObject);
   if (isClient) return;
   console.warn('SpawnBall')
 
   const game = getGame(entityPlayer);
   const playerNetworkObject = getComponent(entityPlayer, NetworkObject);
-
+  console.log("HERE");
+  console.log("HERE");
+  console.log(playerNetworkObject.entity.gamePlayer.role);
+  
   const networkId = Network.getNetworkId();
   const uuid = MathUtils.generateUUID();
   // send position to spawn
@@ -77,31 +83,51 @@ export const spawnBall: Behavior = (entityPlayer: Entity, args?: any, delta?: nu
 const golfBallRadius = 0.03; // this is the graphical size of the golf ball
 const golfBallColliderExpansion = 0.03; // this is the size of the ball collider
 
-function assetLoadCallback(group: Group, ballEntity: Entity) {
+const golfBallMaterials = [
+  new MeshPhongMaterial( { color: GolfColors.red, name: 'red' } ),
+  new MeshPhongMaterial( { color: GolfColors.green, name: 'green' } ),
+  new MeshPhongMaterial( { color: GolfColors.blue, name: 'blue' } ),
+  new MeshPhongMaterial( { color: GolfColors.yellow, name: 'yellow' } ),
+  new MeshPhongMaterial( { color: GolfColors.magenta, name: 'magenta' } ),
+  new MeshPhongMaterial( { color: GolfColors.cyan, name: 'cyan' } ),
+  new MeshPhongMaterial( { color: GolfColors.orange, name: 'orange' } ),
+  new MeshPhongMaterial( { color: GolfColors.brown, name: 'brown' } )
+];
+
+function assetLoadCallback(group: Group, ballEntity: Entity, roleString: String) {
   // its transform was set in createGolfBallPrefab from parameters (its transform Golf Tee);
   const transform = getComponent(ballEntity, TransformComponent);
   const gameObject = getComponent(ballEntity, GameObject);
+  console.log(gameObject);
+  
   const ballMesh = group.children[0].clone(true) as Mesh;
   ballMesh.name = 'Ball' + gameObject.uuid;
   ballMesh.position.copy(transform.position);
   ballMesh.scale.copy(transform.scale);
   ballMesh.castShadow = true;
-  ballMesh.receiveShadow = true;
+  ballMesh.material = golfBallMaterials[parseInt(roleString[0]) - 1];
+  console.log(ballMesh);
+  console.log(parseInt(roleString[0]));
+  
   addComponent(ballEntity, Object3DComponent, { value: ballMesh });
 }
 
-export const initializeGolfBall = (ballEntity: Entity) => {
+export const initializeGolfBall = (ballEntity: Entity, entityPlayer: Entity) => {
   // its transform was set in createGolfBallPrefab from parameters (its transform Golf Tee);
   const transform = getComponent(ballEntity, TransformComponent);
   const networkObject = getComponent(ballEntity, NetworkObject);
+  
   const ownerNetworkObject = Object.values(Network.instance.networkObjects).find((obj) => {
     return obj.ownerId === networkObject.ownerId;
   }).component;
-
+  console.log(entityPlayer);
+  console.log(entityPlayer);
+  console.log(ballEntity);
+  console.log(ownerNetworkObject);
   if (isClient) {
     AssetLoader.load({
       url: Engine.publicPath + '/models/golf/golf_ball.glb',
-    }, (group: Group) => { assetLoadCallback(group, ballEntity) });
+    }, (group: Group) => { assetLoadCallback(group, ballEntity, "1-Player") });
   }
 
   const shape: ShapeType = {
@@ -132,7 +158,7 @@ export const initializeGolfBall = (ballEntity: Entity) => {
   collider.body = body;
 }
 
-type GolfBallSpawnParameters = {
+type GolfBallSpawnParameters = { 
   gameName: string;
   role: string;
   uuid: string;

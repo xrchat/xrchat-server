@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\packages",
+    "\\packages\\engine",
+    "\\packages\\engine\\src",
+    "\\packages\\engine\\src\\game",
+    "\\packages\\engine\\src\\game\\templates",
+    "\\packages\\engine\\src\\game\\templates\\Golf",
+    "\\packages\\engine\\src\\game\\templates\\Golf\\prefab"
+  ],
+  "SelectedNode": "\\packages\\engine\\src\\game\\templates\\Golf\\prefab\\GolfBallPrefab.ts",
+  "PreviewInSolutionExplorer": false
+}

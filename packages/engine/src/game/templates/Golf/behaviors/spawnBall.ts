@@ -29,7 +29,7 @@ export const spawnBall: Behavior = (entity: Entity, args?: any, delta?: number, 
   // but soon
   const teeEntity = game.gameObjects[args.positionCopyFromRole][0]
   const teeTransform = getComponent(teeEntity, TransformComponent);
-
+  
   const parameters = {
     gameName: game.name,
     role: 'GolfBall',
