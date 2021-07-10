@@ -59,7 +59,7 @@ import { isClient } from "../../common/functions/isClient";
 /**
  * Add Object3D Component with args into Entity from the Behavior.
  */
-export const addObject3DComponent: Behavior<{ obj3d: any; objArgs?: any; parentEntity?: Entity }> = (
+export const addObject3DComponent = (
   entity: Entity,
   args
 ) => {

@@ -13,7 +13,7 @@ import { ColliderTypes } from "../../physics/types/PhysicsTypes";
  * @author HydraFire <github.com/HydraFire>
  */
 
-export const createMeshCollider: Behavior = ( entity: Entity, args: MeshColliderProps ) => {
+export const createMeshCollider = ( entity: Entity, args: MeshColliderProps ) => {
   switch (args.data) {
     case 'physics':
       addColliderWithoutEntity(

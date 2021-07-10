@@ -55,7 +55,7 @@ export const elementPlaying = (element: any): boolean => {
   return element && (!!(element.currentTime > 0 && !element.paused && !element.ended && element.readyState > 2));
 };
 
-const onMediaInteraction: Behavior = (entityInitiator, args, delta, entityInteractive, time) => {
+const onMediaInteraction = (entityInitiator, args, delta, entityInteractive, time) => {
   const volumetric = getComponent(entityInteractive, VolumetricComponent);
   if (volumetric) {
     // TODO handle volumetric interaction here
@@ -71,7 +71,7 @@ const onMediaInteraction: Behavior = (entityInitiator, args, delta, entityIntera
   }
 };
 
-const onMediaInteractionHover: Behavior = (entityInitiator, { focused }: { focused: boolean }, delta, entityInteractive, time) => {
+const onMediaInteractionHover = (entityInitiator, { focused }: { focused: boolean }, delta, entityInteractive, time) => {
   const { el: mediaElement } = getComponent(entityInteractive, Object3DComponent).value as AudioSource;
 
   EngineEvents.instance.dispatchEvent({
@@ -126,7 +126,7 @@ export function createVideo(entity, args: VideoProps): void {
   if(args.interactable) addInteraction(entity);
 }
 
-export const createVolumetric: Behavior = (entity, args: VolumetricProps) => {
+export const createVolumetric = (entity, args: VolumetricProps) => {
   addComponent(entity, VolumetricComponent);
   const volumetricComponent = getMutableComponent(entity, VolumetricComponent);
   const container = new Object3D();

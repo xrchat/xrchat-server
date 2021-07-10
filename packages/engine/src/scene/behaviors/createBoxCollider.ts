@@ -6,7 +6,7 @@ import { addColliderWithoutEntity } from '../../physics/behaviors/colliderCreate
  * @author HydraFire <github.com/HydraFire>
  */
 
-export const createBoxCollider: Behavior = (entity, args: BoxColliderProps) => {
+export const createBoxCollider = (entity, args: BoxColliderProps) => {
   // console.log('createBoxCollider', args)
   addColliderWithoutEntity(
     { type: 'box', action: args.action, link: args.link, isTrigger: args.isTrigger },
