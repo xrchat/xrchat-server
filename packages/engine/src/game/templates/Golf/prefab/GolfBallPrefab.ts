@@ -115,7 +115,7 @@ export const initializeGolfBall = (ballEntity: Entity) => {
       contactOffset: golfBallColliderExpansion,
       material: { staticFriction: 0.2, dynamicFriction: 0.2, restitution: 0.9 },
       collisionLayer: GolfCollisionGroups.Ball,
-      collisionMask: CollisionGroups.Default | CollisionGroups.Ground | GolfCollisionGroups.Hole,
+      collisionMask: CollisionGroups.Default | CollisionGroups.Ground | GolfCollisionGroups.Course | GolfCollisionGroups.Hole,
     },
   };
 

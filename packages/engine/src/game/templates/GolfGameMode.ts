@@ -60,6 +60,8 @@ import { makeKinematic } from "./Golf/behaviors/makeKinematic";
 import { hasState } from "./gameDefault/checkers/hasState";
 import { GolfClubComponent } from "./Golf/components/GolfClubComponent";
 import { setupOfflineDebug } from "./Golf/behaviors/setupOfflineDebug";
+import { ifOutCourse } from "./gameDefault/checkers/ifOutCourse";
+import { initBallRaycast } from "./Golf/behaviors/initBallRaycast";
 
 /**
  * @author HydraFire
@@ -204,7 +206,8 @@ export const GolfGameMode: GameMode = somePrepareFunction({
       behaviors: [spawnClub, initScore]
     },
     'GolfBall': {
-      components: [State.SpawnedObject, State.NotReady, State.Active, State.BallMoving]
+      components: [State.SpawnedObject, State.NotReady, State.Active, State.BallMoving],
+      behaviors: [initBallRaycast]
     },
     'GolfClub': {
       components: [State.SpawnedObject, State.Active]
@@ -471,7 +474,28 @@ export const GolfGameMode: GameMode = somePrepareFunction({
               }
             }
           }
-        }
+        },
+        {
+          behavior: teleportObject,
+          prepareArgs: getPositionNextPoint,
+          args: { on: 'self', positionCopyFromRole: 'GolfTee-', position: null},
+          watchers: [ [State.BallStopped] ],
+          checkers:[{
+            function: ifOutCourse,
+            args: { rightCourseLayer: 4}
+          }],
+          takeEffectOn: {
+            targetsRole: {
+              '1-Player': {
+                checkers:[{
+                  function: ifOwned
+                  }
+                ]
+              }
+            }
+          }
+        },
+        
       ],
       'update': [
         // switch Moving Stopped State from check Ball Velocity
