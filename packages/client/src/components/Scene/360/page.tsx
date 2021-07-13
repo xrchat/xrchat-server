@@ -54,9 +54,6 @@ export const XR360PlayerPage = (props: Props) => {
       },
       networking: {
         useOfflineMode: true
-      },
-      physics: {
-        physxWorker: new Worker('/scripts/loadPhysXClassic.js')
       }
     }
     console.log(InitializationOptions)

@@ -340,8 +340,7 @@ export const EnginePage = (props: Props) => {
         canvasId: engineRendererCanvasId
       },
       physics: {
-        simulationEnabled: false,
-        physxWorker: new Worker('/scripts/loadPhysXClassic.js')
+        simulationEnabled: false
       }
     }
 

@@ -23,6 +23,8 @@ import { rigidbodyInterpolationBehavior } from '../behaviors/rigidbodyInterpolat
 import { LocalInterpolationComponent } from '../components/LocalInterpolationComponent'
 import { ControllerColliderComponent } from '../../character/components/ControllerColliderComponent'
 import { rigidbodyCorrectionBehavior } from '../behaviors/rigidbodyCorrectionBehavior'
+import Worker from 'web-worker'
+import { Engine } from '../../ecs/classes/Engine'
 
 /**
  * @author HydraFire <github.com/HydraFire>
@@ -47,7 +49,6 @@ export class PhysicsSystem extends System {
     super(attributes)
     PhysicsSystem.instance = this
     this.physicsWorldConfig = Object.assign({}, attributes.physicsWorldConfig)
-    this.worker = attributes.worker
 
     EngineEvents.instance.addEventListener(EngineEvents.EVENTS.ENABLE_SCENE, (ev: any) => {
       if (typeof ev.physics !== 'undefined') {
@@ -64,7 +65,13 @@ export class PhysicsSystem extends System {
 
   async initialize() {
     super.initialize()
+    console.log(import.meta)
+    const url = new URL('../functions/loadPhysX', import.meta.url)
+    console.log(url)
+    this.worker = new Worker(url, { type: 'module' })
     await PhysXInstance.instance.initPhysX(this.worker, this.physicsWorldConfig)
+
+    Engine.workers.push(this.worker)
   }
 
   reset(): void {

@@ -92,20 +92,9 @@ const configureClient = async (options: InitializeOptions) => {
       Engine.camera.layers.enableAll()
       Engine.scene.add(Engine.camera)
 
-      /** @todo for when we fix bundling */
-      // if((window as any).safariWebBrowser) {
-      //   physicsWorker = new Worker(options.physxWorkerPath);
-      // } else {
-      //     // @ts-ignore
-      //     const { default: PhysXWorker } = await import('@xrengine/engine/src/physics/functions/loadPhysX.ts?worker&inline');
-      //     physicsWorker = new PhysXWorker();
-      // }
-
       new FontManager()
       new AnimationManager()
       await Promise.all([AnimationManager.instance.getDefaultModel(), AnimationManager.instance.getAnimations()])
-
-      Engine.workers.push(options.physics.physxWorker)
     }
   }
 
@@ -120,21 +109,6 @@ const configureEditor = async (options: InitializeOptions) => {
   Engine.camera = new PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 10000)
   Engine.camera.layers.enableAll()
   Engine.scene.add(Engine.camera)
-
-  // let physicsWorker;
-
-  /** @todo fix bundling */
-  // if((window as any).safariWebBrowser) {
-  // eslint-disable-next-line prefer-const
-  // physicsWorker = new Worker(options.physxWorkerPath);
-  // } else {
-  //     // @ts-ignore
-  //     const { default: PhysXWorker } = await import('./physics/functions/loadPhysX.ts?worker');
-  //     physicsWorker = new PhysXWorker();
-  // }
-
-  Engine.workers.push(options.physics.physxWorker)
-
   registerEditorSystems(options)
 }
 
@@ -145,9 +119,6 @@ const configureServer = async (options: InitializeOptions) => {
   EngineEvents.instance.once(EngineEvents.EVENTS.JOINED_WORLD, () => {
     EngineEvents.instance.dispatchEvent({ type: EngineEvents.EVENTS.ENABLE_SCENE, renderer: true, physics: true })
   })
-
-  Engine.workers.push(options.physics.physxWorker)
-
   registerServerSystems(options)
 }
 
@@ -189,7 +160,6 @@ const registerClientSystems = (options: InitializeOptions, useOffscreen: boolean
   registerSystem(TransformSystem, { priority: 7 }) // Free
   registerSystem(PhysicsSystem, {
     simulationEnabled: options.physics.simulationEnabled,
-    worker: options.physics.physxWorker,
     physicsWorldConfig: options.physics.physicsWorldConfig,
     priority: 8
   })
@@ -209,7 +179,6 @@ const registerEditorSystems = (options: InitializeOptions) => {
   registerSystem(TransformSystem, { priority: 7 })
   registerSystem(PhysicsSystem, {
     simulationEnabled: options.physics.simulationEnabled,
-    worker: options.physics.physxWorker,
     physicsWorldConfig: options.physics.physicsWorldConfig,
     priority: 8
   })
@@ -234,7 +203,6 @@ const registerServerSystems = (options: InitializeOptions) => {
   registerSystem(TransformSystem, { priority: 7 })
   registerSystem(PhysicsSystem, {
     simulationEnabled: options.physics.simulationEnabled,
-    worker: options.physics.physxWorker,
     physicsWorldConfig: options.physics.physicsWorldConfig,
     priority: 8
   })

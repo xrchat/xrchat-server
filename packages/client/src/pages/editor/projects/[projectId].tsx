@@ -62,10 +62,7 @@ const Project = (props: Props) => {
 
   const initializationOptions: InitializeOptions = {
     type: EngineSystemPresets.EDITOR,
-    publicPath: location.origin,
-    physics: {
-      physxWorker: new Worker('/scripts/loadPhysXClassic.js')
-    }
+    publicPath: location.origin
   }
 
   useEffect(() => {

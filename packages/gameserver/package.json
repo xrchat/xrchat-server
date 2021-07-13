@@ -34,7 +34,7 @@
   "scripts": {
     "check-errors": "tsc --noemit",
     "start": "cross-env NODE_ENV=production ts-eager src/index.ts",
-    "dev": "nodemon -r ts-eager/register src/index.ts",
+    "dev": "nodemon",
     "dev-nossl": "cross-env NOSSL=true ts-eager src/index.ts",
     "test": "echo \"TODO: no test specified\" && exit 0",
     "validate": "npm run lint && npm run build && npm run test",
@@ -72,6 +72,8 @@
     "compression": "1.7.4",
     "cors": "2.8.5",
     "dauria": "2.0.0",
+    "esbuild-node-tsc": "^1.6.0",
+    "esbuild-plugin-tsc": "^0.3.0",
     "feathers-authentication-management": "3.1.0",
     "feathers-blob": "2.6.0",
     "feathers-hooks-common": "5.0.6",

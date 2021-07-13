@@ -249,7 +249,7 @@ export const delay = (delay: number) => {
   })
 }
 
-export const processLocationChange = async (newPhysicsWorker: Worker): Promise<void> => {
+export const processLocationChange = async (): Promise<void> => {
   const entitiesToRemove = []
   const removedEntities = []
   const sceneObjectsToRemove = []
@@ -287,13 +287,13 @@ export const processLocationChange = async (newPhysicsWorker: Worker): Promise<v
     system.reset()
   })
 
-  await resetPhysics(newPhysicsWorker)
+  await resetPhysics()
 }
 
-export const resetPhysics = async (newPhysicsWorker: Worker): Promise<void> => {
+export const resetPhysics = async (): Promise<void> => {
   PhysicsSystem.instance.worker.terminate()
   Engine.workers.splice(Engine.workers.indexOf(PhysicsSystem.instance.worker), 1)
   PhysXInstance.instance.dispose()
   PhysXInstance.instance = new PhysXInstance()
-  await PhysXInstance.instance.initPhysX(newPhysicsWorker, PhysicsSystem.instance.physicsWorldConfig)
+  await PhysicsSystem.instance.initialize()
 }

@@ -52,9 +52,6 @@ const DevPage = () => {
       },
       networking: {
         useOfflineMode: true
-      },
-      physics: {
-        physxWorker: new Worker('/scripts/loadPhysXClassic.js')
       }
     }
     console.log(initializationOptions)

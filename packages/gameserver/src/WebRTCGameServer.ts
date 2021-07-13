@@ -17,10 +17,7 @@ const options: InitializeOptions = {
       transport: SocketWebRTCServerTransport
     } as NetworkSchema
   },
-  publicPath: config.client.url,
-  physics: {
-    physxWorker: new Worker(currentPath + '/physx/loadPhysXNode.ts')
-  }
+  publicPath: config.client.url
 }
 
 export class WebRTCGameServer {

@@ -85,7 +85,7 @@ export default (app: Application): void => {
                 Engine.sceneLoaded = false
                 WorldScene.isLoading = false
                 const currentPath = (process.platform === 'win32' ? 'file:///' : '') + path.dirname(__filename)
-                await processLocationChange(new Worker(currentPath + '/physx/loadPhysXNode.ts'))
+                await processLocationChange()
                 Engine.engineTimer.start()
               }
               if (channelId != null) {

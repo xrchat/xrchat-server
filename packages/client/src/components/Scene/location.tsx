@@ -446,8 +446,7 @@ export const EnginePage = (props: Props) => {
           canvasId: engineRendererCanvasId
         },
         physics: {
-          simulationEnabled: false,
-          physxWorker: new Worker('/scripts/loadPhysXClassic.js')
+          simulationEnabled: false
         }
       }
 
@@ -573,7 +572,7 @@ export const EnginePage = (props: Props) => {
     history.replace('/location/' + portalComponent.location)
     setNewSpawnPos(portalComponent)
 
-    await processLocationChange(new Worker('/scripts/loadPhysXClassic.js'))
+    await processLocationChange()
 
     getLocationByName(portalComponent.location)
 
