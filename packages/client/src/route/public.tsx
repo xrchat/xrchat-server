@@ -73,7 +73,10 @@ class RouterComp extends React.Component<{}, { hasError: boolean }> {
             path="/blondtron/:locationName"
             component={React.lazy(() => import('../pages/event/[locationName]'))}
           />
-
+          <Route
+            path="/event/:locationName"
+            component={React.lazy(() => import('../pages/event/[locationName]'))}
+          />
           <Route
             path="/offline/:locationName"
             component={React.lazy(() => import('../pages/offline/[locationName]'))}

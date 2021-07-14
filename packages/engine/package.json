@@ -39,6 +39,9 @@
     "@typescript-eslint/parser": "^4.4.1"
   },
   "dependencies": {
+    "@here/harp-map-controls": "^0.25.0",
+    "@here/harp-vectortile-datasource": "^0.25.0",
+    "@here/harp.gl": "^0.25.0",
     "@pixiv/three-vrm": "^0.6.4",
     "@xrengine/common": "^0.3.31",
     "browserfs": "^1.4.3",
@@ -73,7 +76,6 @@
     "@types/jest-environment-puppeteer": "4.4.1",
     "@types/puppeteer": "5.4.4",
     "@types/three": "0.130.0",
-    "@xrengine/bot": "^0.3.31",
     "esbuild": "0.12.15",
     "eslint": "7.30.0",
     "jest": "27.0.6",

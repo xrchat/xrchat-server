@@ -53,6 +53,8 @@ import SpotLightNodeEditor from './properties/SpotLightNodeEditor'
 import TriggerVolumeNodeEditor from './properties/TriggerVolumeNodeEditor'
 import VideoNodeEditor from './properties/VideoNodeEditor'
 import VolumetricNodeEditor from './properties/VolumetricNodeEditor'
+import MapNodeEditor from './properties/MapNodeEditor'
+import MapNode from '@xrengine/engine/src/editor/nodes/MapNode'
 
 /**
  * createEditor used to create editor object and register nodes available to create scene.
@@ -64,7 +66,6 @@ import VolumetricNodeEditor from './properties/VolumetricNodeEditor'
  */
 export function createEditor(api, settings, Engine) {
   const editor = new Editor(api, settings, Engine)
-
   editor.registerNode(SceneNode, SceneNodeEditor)
   editor.registerNode(GroupNode, GroupNodeEditor)
   editor.registerNode(ModelNode, ModelNodeEditor)
@@ -92,7 +93,7 @@ export function createEditor(api, settings, Engine) {
   editor.registerSource(new ElementsSource(editor))
   editor.registerSource(new MyAssetsSource(editor))
   editor.registerNode(GameNode, GameNodeEditor)
+  editor.registerNode(MapNode, MapNodeEditor)
   editor.registerNode(ReflectionProbeNode, ReflectionProbeNodeEditor)
-
   return editor
 }

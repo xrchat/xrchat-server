@@ -103,6 +103,7 @@
     "sequelize": "6.6.5",
     "serve-favicon": "2.5.0",
     "slugify": "1.5.3",
+    "three-physx": "^0.0.33",
     "universal-analytics": "0.4.23",
     "uuid": "8.3.2",
     "web-worker": "1.0.0",

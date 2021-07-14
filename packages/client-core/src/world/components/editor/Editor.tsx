@@ -157,6 +157,7 @@ export class Editor extends EventEmitter {
   constructor(api, settings = {}, Engine) {
     super()
     this.Engine = Engine
+    globalThis.Editor = this;
     this.camera = Engine.camera
     this.api = api
     this.settings = settings
@@ -188,7 +189,6 @@ export class Editor extends EventEmitter {
 
     // this.camera = new PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.2, 8000);
     this.audioListener = new AudioListener()
-    console.log('This camera is', this.camera)
     this.camera.add(this.audioListener)
     this.camera.layers.enable(1)
     this.camera.name = 'Camera'
@@ -343,6 +343,9 @@ export class Editor extends EventEmitter {
 
     // initializing canvas for current scene
     this.inputManager = new InputManager(this.renderer.canvas)
+
+    // TOOD: Consolidate me
+    globalThis.renderer = this.renderer as any;
 
     // initializing controls
     this.flyControls = new FlyControls(this.camera as any, this.inputManager)

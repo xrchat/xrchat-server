@@ -195,6 +195,9 @@
             "description": "Link to a room or a website.",
             "lbl-url": "URL"
         },
+        "map": {
+            "description": "3D geospatial map of e.g. a city."
+        },
         "model": {
             "description": "A 3D model in your scene, loaded from a GLTF URL or file.",
             "lbl-modelurl": "Model Url",

@@ -1,6 +1,5 @@
 import EventEmitter from 'eventemitter3'
 import jwtDecode from 'jwt-decode'
-import { buildAbsoluteURL } from 'url-toolkit'
 import { RethrownError } from '@xrengine/engine/src/editor/functions/errors'
 import { AudioFileTypes, matchesFileTypes } from './assets/fileTypes'
 import configs from './configs'
@@ -350,7 +349,7 @@ export class Api extends EventEmitter {
     // HACK HLS.js resolves relative urls internally, but our CORS proxying screws it up. Resolve relative to the original unproxied url.
     // TODO extend HLS.js to allow overriding of its internal resolving instead
     if (!url.startsWith('http')) {
-      url = buildAbsoluteURL(baseUrl, url.startsWith('/') ? url : `/${url}`)
+      url = new URL(url.startsWith('/') ? url : `/${url}`, baseUrl)
     }
 
     return url

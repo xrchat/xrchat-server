@@ -58,7 +58,7 @@
     "build-docker": "lerna run --ignore @xrengine/bot --ignore @xrengine/client-ml --ignore @xrengine/docs --ignore @xrengine/engine build --parallel",
     "update-name-gh-package": "lerna run update-name-gh-package",
     "diff": "lerna diff",
-    "clean-node-modules": "npx rimraf node_modules && npx lerna exec npx rimraf node_modules"
+    "clean-node-modules": "npx rimraf node_modules && npx lerna exec npx rimraf node_modules && npx lerna exec npx rimraf package-lock.json"
   },
   "types": "lib/",
   "pre-push": [],
