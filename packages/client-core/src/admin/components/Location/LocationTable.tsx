@@ -163,7 +163,6 @@ const LocationTable = (props: Props) => {
   }
 
   const rows = adminLocations.map((el) => {
-    console.log(el)
     return createData(
       el,
       el.id,

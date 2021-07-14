@@ -1,20 +1,14 @@
 import React from 'react'
 import Drawer from '@material-ui/core/Drawer'
 import Button from '@material-ui/core/Button'
-import { createUser as createUserAction, fetchStaticResource } from '../../reducers/admin/user/service'
 import { bindActionCreators, Dispatch } from 'redux'
 import { connect } from 'react-redux'
-import { fetchUserRole } from '../../reducers/admin/user/service'
-import { selectAdminState } from '../../reducers/admin/selector'
-import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogActions from '@material-ui/core/DialogActions'
 import Container from '@material-ui/core/Container'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import { selectAuthState } from '../../../user/reducers/auth/selector'
 import Snackbar from '@material-ui/core/Snackbar'
 import MuiAlert from '@material-ui/lab/Alert'
 import { useStyles, useStyle } from './styles'
-import { selectAdminUserState } from '../../reducers/admin/user/selector'
 import Paper from '@material-ui/core/Paper'
 import InputBase from '@material-ui/core/InputBase'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -29,6 +23,7 @@ import { selectAdminLocationState } from '../../reducers/admin/location/selector
 import { selectAdminSceneState } from '../../reducers/admin/scene/selector'
 import { createLocation as createLocationAction } from '../../reducers/admin/location/service'
 import { formValid } from '../Users/validation'
+import { selectAlertState } from '../../../common/reducers/alert/selector'
 
 const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />
@@ -41,12 +36,14 @@ interface Props {
   adminSceneState?: any
   createLocationAction?: any
   closeViewModel?: any
+  adminAlert?: any
 }
 
 const mapStateToProps = (state: any): any => {
   return {
     adminLocationState: selectAdminLocationState(state),
-    adminSceneState: selectAdminSceneState(state)
+    adminSceneState: selectAdminSceneState(state),
+    adminAlert: selectAlertState(state)
   }
 }
 
@@ -55,7 +52,8 @@ const mapDispatchToProps = (dispatch: Dispatch): any => ({
 })
 
 const CreateLocation = (props: Props) => {
-  const { open, handleClose, adminLocationState, adminSceneState, createLocationAction, closeViewModel } = props
+  const { open, handleClose, adminLocationState, adminSceneState, createLocationAction, closeViewModel, adminAlert } =
+    props
   const classesx = useStyle()
   const classes = useStyles()
   const [openWarning, setOpenWarning] = React.useState(false)
@@ -79,7 +77,37 @@ const CreateLocation = (props: Props) => {
 
   const { t } = useTranslation()
   const locationTypes = adminLocationState.get('locationTypes').get('locationTypes')
+  const location = adminLocationState.get('locations')
   const adminScenes = adminSceneState.get('scenes').get('scenes')
+  const errorType = adminAlert.get('type')
+  const errorMessage = adminAlert.get('message')
+
+  React.useEffect(() => {
+    if (location.get('created')) {
+      closeViewModel(false)
+      setState({
+        ...state,
+        name: '',
+        maxUsers: 10,
+        scene: '',
+        type: 'private',
+        videoEnabled: false,
+        globalMediaEnabled: false,
+        isLobby: false,
+        isFeatured: false
+      })
+    }
+  }, [location])
+
+  React.useEffect(() => {
+    if (errorType === 'error') {
+      setError(errorMessage)
+      setOpenWarning(true)
+      setTimeout(() => {
+        setOpenWarning(false)
+      }, 5000)
+    }
+  }, [errorType, errorMessage])
 
   const handleCloseWarning = (event, reason) => {
     if (reason === 'clickaway') {
@@ -136,18 +164,7 @@ const CreateLocation = (props: Props) => {
     setState({ ...state, formErrors: temp })
     if (formValid(state, state.formErrors)) {
       createLocationAction(data)
-      closeViewModel(false)
-      setState({
-        ...state,
-        name: '',
-        maxUsers: 10,
-        scene: '',
-        type: 'private',
-        videoEnabled: false,
-        globalMediaEnabled: false,
-        isLobby: false,
-        isFeatured: false
-      })
+      //  closeViewModel(false)
     } else {
       setError('Please fill all required field')
       setOpenWarning(true)

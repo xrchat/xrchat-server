@@ -41,6 +41,7 @@ export function createLocation(location: any) {
       const result = await client.service('location').create(location)
       dispatch(locationCreated(result))
     } catch (err) {
+      console.error(err.message)
       dispatchAlertError(dispatch, err.message)
     }
   }

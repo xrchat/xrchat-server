@@ -16,6 +16,8 @@ import FormControl from '@material-ui/core/FormControl'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import Select from '@material-ui/core/Select'
+import FormGroup from '@material-ui/core/FormGroup'
+import Switch from '@material-ui/core/Switch'
 import { selectAdminSceneState } from '../../reducers/admin/scene/selector'
 import { connect } from 'react-redux'
 import { selectAdminLocationState } from '../../reducers/admin/location/selector'
@@ -85,7 +87,11 @@ const ViewLocation = (props: Props) => {
         name: locationAdmin.name,
         maxUsers: locationAdmin.maxUsersPerInstance,
         scene: locationAdmin.sceneId,
-        type: locationAdmin.location_setting.locationType
+        type: locationAdmin.location_setting.locationType,
+        videoEnabled: locationAdmin.location_setting.videoEnabled,
+        globalMediaEnabled: locationAdmin.location_setting.instanceMediaChatEnabled,
+        isLobby: locationAdmin.isFeatured,
+        isFeatured: locationAdmin.isLobby
       })
     }
   }, [locationAdmin])
@@ -119,11 +125,11 @@ const ViewLocation = (props: Props) => {
       sceneId: state.scene,
       location_setting: {
         locationType: state.type,
-        instanceMediaChatEnabled: location.location_setting.globalMediaEnabled,
-        videoEnabled: location.location_setting.videoEnabled
+        instanceMediaChatEnabled: state.globalMediaEnabled,
+        videoEnabled: state.videoEnabled
       },
-      isLobby: location.isLobby,
-      isFeatured: location.isFeatured
+      isLobby: state.isLobby,
+      isFeatured: state.isFeatured
     }
 
     let temp = state.formErrors
@@ -288,6 +294,74 @@ const ViewLocation = (props: Props) => {
                   </Select>
                 </FormControl>
               </Paper>
+              <Grid container spacing={5} className={classes.marginBottm}>
+                <Grid item xs={6}>
+                  <FormGroup>
+                    <FormControl>
+                      <FormControlLabel
+                        color="primary"
+                        control={
+                          <Switch
+                            checked={state.videoEnabled}
+                            onChange={(e) => setState({ ...state, videoEnabled: e.target.checked })}
+                            name="videoEnabled"
+                          />
+                        }
+                        label={t('admin:components.locationModel.lbl-ve')}
+                      />
+                    </FormControl>
+                  </FormGroup>
+                  <FormGroup>
+                    <FormControl>
+                      <FormControlLabel
+                        color="primary"
+                        control={
+                          <Switch
+                            checked={state.globalMediaEnabled}
+                            onChange={(e) => setState({ ...state, globalMediaEnabled: e.target.checked })}
+                            name="globalMediaEnabled"
+                          />
+                        }
+                        label={t('admin:components.locationModel.lbl-gme')}
+                      />
+                    </FormControl>
+                  </FormGroup>
+                </Grid>
+                <Grid item xs={6} style={{ display: 'flex' }}>
+                  <div style={{ marginLeft: 'auto' }}>
+                    <FormGroup>
+                      <FormControl>
+                        <FormControlLabel
+                          color="primary"
+                          control={
+                            <Switch
+                              checked={state.isLobby}
+                              onChange={(e) => setState({ ...state, isLobby: e.target.checked })}
+                              name="isLobby"
+                            />
+                          }
+                          label={t('admin:components.locationModel.lbl-lobby')}
+                        />
+                      </FormControl>
+                    </FormGroup>
+                    <FormGroup>
+                      <FormControl>
+                        <FormControlLabel
+                          color="primary"
+                          control={
+                            <Switch
+                              checked={state.isFeatured}
+                              onChange={(e) => setState({ ...state, isFeatured: e.target.checked })}
+                              name="isFeatured"
+                            />
+                          }
+                          label={t('admin:components.locationModel.lbl-featured')}
+                        />
+                      </FormControl>
+                    </FormGroup>
+                  </div>
+                </Grid>
+              </Grid>
             </div>
           </Container>
         ) : (

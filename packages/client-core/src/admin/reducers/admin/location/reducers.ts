@@ -29,6 +29,7 @@ export const initialAdminState = {
     retrieving: false,
     fetched: false,
     updateNeeded: true,
+    created: false,
     lastFetched: new Date()
   },
   locationTypes: {
@@ -58,6 +59,7 @@ const adminReducer = (state = immutableState, action: any): any => {
     case ADMIN_LOCATION_CREATED:
       updateMap = new Map(state.get('locations'))
       updateMap.set('updateNeeded', true)
+      updateMap.set('created', true)
       return state.set('locations', updateMap)
 
     case ADMIN_LOCATION_PATCHED:
