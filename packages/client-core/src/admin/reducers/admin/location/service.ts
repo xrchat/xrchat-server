@@ -15,12 +15,14 @@ export function fetchLocationTypes() {
     dispatch(locationTypesRetrieved(locationTypes))
   }
 }
+
 export function patchLocation(id: string, location: any) {
   return async (dispatch: Dispatch): Promise<any> => {
     try {
       const result = await client.service('location').patch(id, location)
       dispatch(locationPatched(result))
     } catch (err) {
+      console.error(err)
       dispatchAlertError(dispatch, err.message)
     }
   }
@@ -39,6 +41,7 @@ export function createLocation(location: any) {
       const result = await client.service('location').create(location)
       dispatch(locationCreated(result))
     } catch (err) {
+      console.error(err.message)
       dispatchAlertError(dispatch, err.message)
     }
   }

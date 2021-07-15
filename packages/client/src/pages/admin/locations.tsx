@@ -1,4 +1,4 @@
-import AdminConsole from '@xrengine/client-core/src/admin/components'
+import AdminConsole from '@xrengine/client-core/src/admin/components/Location'
 import { doLoginAuto } from '@xrengine/client-core/src/user/reducers/auth/service'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'

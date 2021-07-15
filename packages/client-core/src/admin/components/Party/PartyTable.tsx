@@ -12,7 +12,7 @@ import { connect } from 'react-redux'
 import { selectAuthState } from '../../../user/reducers/auth/selector'
 import { selectAdminState } from '../../reducers/admin/selector'
 import { PropsTable, columns, Data } from './variables'
-import { useStyles } from './style'
+import { useStyle, useStyles } from './style'
 import { selectAdminPartyState } from '../../reducers/admin/party/selector'
 
 const mapDispatchToProps = (dispatch: Dispatch): any => ({
@@ -28,11 +28,12 @@ const mapStateToProps = (state: any): any => {
 }
 
 const PartyTable = (props: PropsTable) => {
-  const classes = useStyles()
+  const classes = useStyle()
+  const classex = useStyles()
   const { fetchAdminParty, authState, adminPartyState } = props
 
   const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [rowsPerPage, setRowsPerPage] = React.useState(12)
 
   const user = authState.get('user')
   const adminParty = adminPartyState.get('parties')
@@ -40,11 +41,6 @@ const PartyTable = (props: PropsTable) => {
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(+event.target.value)
-    setPage(0)
   }
 
   React.useEffect(() => {
@@ -62,11 +58,7 @@ const PartyTable = (props: PropsTable) => {
         <>
           <a href="#h" className={classes.actionStyle}>
             {' '}
-            View{' '}
-          </a>
-          <a href="#h" className={classes.actionStyle}>
-            {' '}
-            Edit{' '}
+            <span className={classes.spanWhite}>View</span>{' '}
           </a>
           <a href="#h" className={classes.actionStyle}>
             <span className={classes.spanDange}>Delete</span>
@@ -74,6 +66,11 @@ const PartyTable = (props: PropsTable) => {
         </>
       )
     }
+  }
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(+event.target.value)
+    setPage(0)
   }
 
   const rows = adminPartyData.map((el) =>
@@ -91,7 +88,12 @@ const PartyTable = (props: PropsTable) => {
           <TableHead>
             <TableRow>
               {columns.map((column) => (
-                <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ minWidth: column.minWidth }}
+                  className={classex.tableCellHeader}
+                >
                   {column.label}
                 </TableCell>
               ))}
@@ -104,7 +106,7 @@ const PartyTable = (props: PropsTable) => {
                   {columns.map((column) => {
                     const value = row[column.id]
                     return (
-                      <TableCell key={column.id} align={column.align}>
+                      <TableCell key={column.id} align={column.align} className={classex.tableCellBody}>
                         {value}
                       </TableCell>
                     )
@@ -116,13 +118,14 @@ const PartyTable = (props: PropsTable) => {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[12]}
         component="div"
         count={rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        className={classex.tableFooter}
       />
     </div>
   )

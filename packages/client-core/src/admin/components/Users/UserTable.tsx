@@ -141,7 +141,6 @@ const UserTable = (props: Props) => {
   })
 
   const count = rows.size ? rows.size : rows.length
-
   return (
     <div className={classes.root}>
       <TableContainer className={classes.container}>
@@ -184,8 +183,8 @@ const UserTable = (props: Props) => {
         count={count || 12}
         rowsPerPage={rowsPerPage}
         page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
         className={classx.tableFooter}
       />
       <Dialog
