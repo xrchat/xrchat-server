@@ -84,7 +84,7 @@
     "jest": "27.0.6",
     "jest-puppeteer": "5.0.4",
     "puppeteer": "9.1.1",
-    "rollup": "2.53.1",
+    "rollup": "2.53.2",
     "rollup-plugin-node-polyfills": "0.2.1",
     "rollup-plugin-scss": "3.0.0",
     "ts-jest": "27.0.3",
