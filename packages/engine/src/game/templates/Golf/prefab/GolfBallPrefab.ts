@@ -21,6 +21,7 @@ import { TransformComponent } from '../../../../transform/components/TransformCo
 import { GameObject } from '../../../components/GameObject'
 import { getGame } from '../../../functions/functions'
 import { GolfCollisionGroups, GolfPrefabTypes } from '../GolfGameConstants'
+import TrailRenderer from '../../../../scene/classes/TrailRenderer'
 
 /**
  * @author Josh Field <github.com/HexaField>
@@ -83,6 +84,28 @@ export const spawnBall: Behavior = (
  * @author Josh Field <github.com/HexaField>
  */
 
+export const updateBall: Behavior = (
+  entityBall: Entity,
+  args?: any,
+  delta?: number,
+  entityTarget?: Entity,
+  time?: number,
+  checks?: any
+): void => {
+  if (isClient) {
+    const obj = getComponent(entityBall, Object3DComponent)
+    if (!obj?.value) return
+    const ballMesh = obj.value.userData.trailObject as TrailRenderer
+    ballMesh.advance()
+    ballMesh.updateHead()
+    console.log(ballMesh)
+  }
+}
+
+/**
+ * @author Josh Field <github.com/HexaField>
+ */
+
 const golfBallRadius = 0.03 // this is the graphical size of the golf ball
 const golfBallColliderExpansion = 0.03 // this is the size of the ball collider
 
@@ -97,15 +120,23 @@ function assetLoadCallback(group: Group, ballEntity: Entity) {
   ballMesh.castShadow = true
   ballMesh.receiveShadow = true
   addComponent(ballEntity, Object3DComponent, { value: ballMesh })
+
+  // Add trail effect
+
+  const trailHeadGeometry = []
+  trailHeadGeometry.push(new Vector3(-10.0, 0.0, 0.0), new Vector3(0.0, 0.0, 0.0), new Vector3(10.0, 0.0, 0.0))
+  const trailObject = new TrailRenderer(false)
+  const trailMaterial = TrailRenderer.createBaseMaterial()
+  const trailLength = 150
+  Engine.scene.add(trailObject)
+  trailObject.initialize(trailMaterial, trailLength, false, 150, trailHeadGeometry, ballMesh)
+  ballMesh.userData.trailObject = trailObject
+  console.log(ballMesh)
 }
 
 export const initializeGolfBall = (ballEntity: Entity) => {
   // its transform was set in createGolfBallPrefab from parameters (its transform Golf Tee);
   const transform = getComponent(ballEntity, TransformComponent)
-  const networkObject = getComponent(ballEntity, NetworkObject)
-  const ownerNetworkObject = Object.values(Network.instance.networkObjects).find((obj) => {
-    return obj.ownerId === networkObject.ownerId
-  }).component
 
   if (isClient) {
     AssetLoader.load(

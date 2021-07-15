@@ -47,7 +47,7 @@ import { BodyType } from 'three-physx'
 import { Euler, Quaternion, Vector3 } from 'three'
 import { removeSpawnedObjects } from '../functions/functions'
 import { ifVelocity } from './gameDefault/checkers/ifVelocity'
-import { spawnBall } from './Golf/prefab/GolfBallPrefab'
+import { spawnBall, updateBall } from './Golf/prefab/GolfBallPrefab'
 import { hitBall } from './Golf/behaviors/hitBall'
 import { teleportPlayerBehavior } from './Golf/behaviors/teleportPlayer'
 import { getPositionNextPoint } from './Golf/behaviors/getPositionNextPoint'
@@ -510,6 +510,10 @@ export const GolfGameMode: GameMode = somePrepareFunction({
         }
       ],
       update: [
+        {
+          behavior: updateBall,
+          args: {}
+        },
         // switch Moving Stopped State from check Ball Velocity
         {
           behavior: switchState,
