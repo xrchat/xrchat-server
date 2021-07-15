@@ -15,8 +15,8 @@ export default class HemisphereLightNode extends EditorNodeMixin(PhysicalHemisph
     node.intensity = intensity
     return node
   }
-  serialize() {
-    return super.serialize({
+  async serialize(projectID) {
+    return await super.serialize(projectID, {
       'hemisphere-light': {
         skyColor: this.skyColor,
         groundColor: this.groundColor,

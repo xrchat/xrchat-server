@@ -40,8 +40,8 @@ export default class LinkNode extends EditorNodeMixin(Object3D) {
     this.href = source.href
     return this
   }
-  serialize() {
-    return super.serialize({
+  async serialize(projectID) {
+    return await super.serialize(projectID, {
       link: {
         href: this.href
       }

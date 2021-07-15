@@ -56,8 +56,8 @@ export default class PointLightNode extends EditorNodeMixin(PhysicalPointLight) 
     }
     return this
   }
-  serialize() {
-    return super.serialize({
+  async serialize(projectID) {
+    return await super.serialize(projectID, {
       'point-light': {
         color: this.color,
         intensity: this.intensity,

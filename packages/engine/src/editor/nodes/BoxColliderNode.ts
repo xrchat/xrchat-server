@@ -53,7 +53,7 @@ export default class BoxColliderNode extends EditorNodeMixin(Object3D) {
     this.isTrigger = source.isTrigger
     return this
   }
-  serialize() {
+  async serialize(projectID) {
     const components = {
       'box-collider': {
         type: this.target === undefined ? 'box' : 'game-object',
@@ -81,7 +81,7 @@ export default class BoxColliderNode extends EditorNodeMixin(Object3D) {
         target: this.target
       }
     }
-    return super.serialize(components)
+    return await super.serialize(projectID, components)
   }
   prepareForExport() {
     super.prepareForExport()

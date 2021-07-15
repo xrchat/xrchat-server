@@ -52,7 +52,7 @@ export default class PortalNode extends EditorNodeMixin(Model) {
     this.displayText = source.displayText
     return this
   }
-  serialize() {
+  async serialize(projectID) {
     const components = {
       portal: {
         location: this.location,
@@ -61,7 +61,7 @@ export default class PortalNode extends EditorNodeMixin(Model) {
         spawnRotation: this.spawnRotation
       }
     } as any
-    return super.serialize(components)
+    return await super.serialize(projectID, components)
   }
   prepareForExport() {
     super.prepareForExport()

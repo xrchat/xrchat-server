@@ -28,6 +28,10 @@ import serializeColor from '../functions/serializeColor'
 import { FogType } from '../../scene/constants/FogType'
 import { EnvMapProps, EnvMapSourceType, EnvMapTextureType } from '../../scene/constants/EnvMapEnum'
 import { DistanceModelType } from '../../scene/classes/AudioSource'
+import ReflectionProbeNode, { ReflectionProbeTypes } from './ReflectionProbeNode'
+import asyncTraverse from '../functions/asyncTraverse'
+import { Api } from '@xrengine/client-core'
+import { uploadCubemap } from './helper/ImageUtils'
 
 export default class SceneNode extends EditorNodeMixin(Scene) {
   static nodeName = 'Scene'
@@ -186,7 +190,7 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
   _envMapSourceURL = ''
   errorInEnvmapURL = false
   _envMapIntensity = 1
-  environmentNodes = []
+  environmentNode: ReflectionProbeNode = null
   //#endregion
 
   constructor(editor) {
@@ -284,7 +288,7 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
     return this
   }
 
-  getEnvMapProps() {
+  async getEnvMapProps(projectId = null) {
     const envMapProps: EnvMapProps = {
       type: this.envMapSourceType,
       envMapIntensity: this._envMapIntensity
@@ -300,6 +304,30 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
         break
       case EnvMapSourceType.Default:
       default:
+        if (!this.environmentNode) break
+        envMapProps.type = EnvMapSourceType.ReflectionProbe
+        envMapProps.envMapReflectionProbe = this.environmentNode.reflectionProbeSettings
+        if (this.environmentNode.reflectionProbeSettings.reflectionType === ReflectionProbeTypes.Baked) {
+          const rt = await this.environmentNode.Bake()
+          const resolution = this.environmentNode.reflectionProbeSettings.resolution
+          const value = await uploadCubemap(
+            this.editor.renderer.renderer,
+            this.editor.api,
+            rt,
+            resolution,
+            'envMapOwnedFileId',
+            projectId
+          )
+          this.environmentNode.reflectionProbeSettings.envMapOrigin = value.origin
+          const {
+            file_id: fileId,
+            meta: { access_token: fileToken }
+          } = value
+          this.editor.api.ownedUploadedFiles['envmap'] = {
+            file_id: fileId,
+            file_token: fileToken
+          }
+        }
         break
     }
 
@@ -336,11 +364,11 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
     pmren.dispose()
   }
 
-  registerEnvironmentMapNodes(node: any) {
-    this.environmentNodes.push(node)
+  registerEnvironmentMapNode(node: ReflectionProbeNode) {
+    this.environmentNode = node
   }
-  unregisterEnvironmentMapNodes(node: any) {
-    this.environmentNodes = this.environmentNodes.filter((item) => item !== node)
+  unregisterEnvironmentMapNode(node: ReflectionProbeNode) {
+    if (this.environmentNode === node) this.environmentNode = null
   }
 
   //#endregion
@@ -430,7 +458,7 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
     return this
   }
   // @ts-ignore
-  serialize() {
+  async serialize(projectId) {
     const sceneJson = {
       version: 4,
       root: this.uuid,
@@ -485,17 +513,18 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
             },
             {
               name: 'envmap',
-              props: this.getEnvMapProps()
+              props: await this.getEnvMapProps(projectId)
             }
           ]
         }
       }
     }
-    this.traverse((child) => {
+
+    const serializeCallback = async (child) => {
       if (!child.isNode || child === this) {
         return
       }
-      const entityJson = child.serialize()
+      const entityJson = await child.serialize(projectId)
       entityJson.parent = child.parent.uuid
       let index = 0
       for (const sibling of child.parent.children) {
@@ -507,7 +536,8 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
       }
       entityJson.index = index
       sceneJson.entities[child.uuid] = entityJson
-    })
+    }
+    await asyncTraverse(this, serializeCallback)
     return sceneJson
   }
   // @ts-ignore

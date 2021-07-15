@@ -52,14 +52,13 @@ export default class SkyboxNode extends EditorNodeMixin(Sky) {
 
   constructor(editor) {
     super(editor)
-    this.editor.scene.registerEnvironmentMapNodes(this)
   }
 
   static canAddNode(editor) {
     return editor.scene.findNodeByType(SkyboxNode) === null
   }
 
-  serialize() {
+  async serialize(projectID) {
     const skybox: SceneBackgroundProps = {
       backgroundColor: this.backgroundColor,
       equirectangularPath: this.equirectangularPath,
@@ -77,7 +76,7 @@ export default class SkyboxNode extends EditorNodeMixin(Sky) {
       }
     }
 
-    return super.serialize({ skybox })
+    return await super.serialize(projectID, { skybox })
   }
 
   static async deserialize(editor, json) {
@@ -109,7 +108,6 @@ export default class SkyboxNode extends EditorNodeMixin(Sky) {
 
   onRemove() {
     this.editor.scene.background = new Color('black')
-    this.editor.scene.unregisterEnvironmentMapNodes(this)
   }
 
   prepareForExport() {

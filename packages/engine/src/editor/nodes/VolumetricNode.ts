@@ -136,8 +136,8 @@ export default class VolumetricNode extends EditorNodeMixin(Volumetric) {
     this._canonicalUrl = source._canonicalUrl
     return this
   }
-  serialize(): any {
-    return super.serialize({
+  async serialize(projectID) {
+    return await super.serialize(projectID, {
       volumetric: {
         src: this._canonicalUrl,
         controls: this.controls,

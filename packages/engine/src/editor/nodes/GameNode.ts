@@ -45,7 +45,7 @@ export default class GameNode extends EditorNodeMixin(Object3D) {
     }
     return this
   }
-  serialize() {
+  async serialize(projectID) {
     const components = {
       game: {
         id: this.id,
@@ -73,7 +73,7 @@ export default class GameNode extends EditorNodeMixin(Object3D) {
         gameMode: this.gameMode
       }
     } as any
-    return super.serialize(components)
+    return await super.serialize(projectID, components)
   }
   prepareForExport() {
     super.prepareForExport()

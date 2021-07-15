@@ -10,7 +10,8 @@ export interface SceneData {
   entities: Array<SceneDataEntity>
   root: string
   sid: string
-  thumbnailOwnedFileId: string
+  //thumbnailOwnedFileId: string
+  ownedUploadedFiles: {}
   type: string // "project"
   url: string
   userId: string

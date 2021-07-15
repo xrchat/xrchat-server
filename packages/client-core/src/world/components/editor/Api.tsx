@@ -95,6 +95,7 @@ export class Api extends EventEmitter {
   projectDirectoryPath: string
   maxUploadSize: number
   props: any
+  ownedUploadedFiles: {}
 
   /**
    * [constructor ]
@@ -113,6 +114,8 @@ export class Api extends EventEmitter {
 
     // Max size in MB
     this.maxUploadSize = 128
+
+    this.ownedUploadedFiles = {}
 
     // This will manage the not authorized users
     this.handleAuthorization()
@@ -465,13 +468,13 @@ export class Api extends EventEmitter {
     const {
       file_id: thumbnailFileId,
       meta: { access_token: thumbnailFileToken }
-    } = (await this.upload(thumbnailBlob, undefined, signal)) as any
+    } = (await this.upload(thumbnailBlob, undefined, signal, 'thumbnailOwnedFileId')) as any
 
     if (signal.aborted) {
       throw new Error(i18n.t('editor:errors.saveProjectAborted'))
     }
 
-    const serializedScene = scene.serialize()
+    const serializedScene = await scene.serialize()
     const projectBlob = new Blob([JSON.stringify(serializedScene)], { type: 'application/json' })
     const {
       file_id: projectFileId,
@@ -491,8 +494,12 @@ export class Api extends EventEmitter {
 
     const project = {
       name: scene.name,
-      thumbnail_file_id: thumbnailFileId,
-      thumbnail_file_token: thumbnailFileToken,
+      ownedUploadedFiles: {
+        thumbnail: {
+          file_id: thumbnailFileId,
+          file_token: thumbnailFileToken
+        }
+      },
       project_file_id: projectFileId,
       project_file_token: projectFileToken
     }
@@ -500,6 +507,9 @@ export class Api extends EventEmitter {
     if (parentSceneId) {
       project['parent_scene_id'] = parentSceneId
     }
+
+    Object.assign(project.ownedUploadedFiles, this.ownedUploadedFiles)
+    this.ownedUploadedFiles = {}
 
     const body = JSON.stringify({ project })
 
@@ -581,13 +591,13 @@ export class Api extends EventEmitter {
     const {
       file_id: thumbnailFileId,
       meta: { access_token: thumbnailFileToken }
-    } = (await this.upload(thumbnailBlob, undefined, signal, projectId)) as any
+    } = (await this.upload(thumbnailBlob, undefined, signal, 'thumbnailOwnedFileId', projectId)) as any
 
     if (signal.aborted) {
       throw new Error(i18n.t('editor:errors.saveProjectAborted'))
     }
 
-    const serializedScene = editor.scene.serialize()
+    const serializedScene = await editor.scene.serialize(projectId)
     const projectBlob = new Blob([JSON.stringify(serializedScene)], { type: 'application/json' })
     const {
       file_id: projectFileId,
@@ -607,8 +617,12 @@ export class Api extends EventEmitter {
 
     const project = {
       name: editor.scene.name,
-      thumbnail_file_id: thumbnailFileId,
-      thumbnail_file_token: thumbnailFileToken,
+      ownedUploadedFiles: {
+        thumbnail: {
+          file_id: thumbnailFileId,
+          file_token: thumbnailFileToken
+        }
+      },
       project_file_id: projectFileId,
       project_file_token: projectFileToken
     }
@@ -618,6 +632,9 @@ export class Api extends EventEmitter {
     if (sceneId) {
       project['scene_id'] = sceneId
     }
+
+    Object.assign(project.ownedUploadedFiles, this.ownedUploadedFiles)
+    this.ownedUploadedFiles = {}
 
     const body = JSON.stringify({
       project
@@ -817,7 +834,7 @@ export class Api extends EventEmitter {
       }
 
       // Serialize Editor scene
-      const serializedScene = editor.scene.serialize()
+      const serializedScene = await editor.scene.serialize(project.project_id)
       const sceneBlob = new Blob([JSON.stringify(serializedScene)], { type: 'application/json' })
 
       showDialog(ProgressDialog, {
@@ -954,9 +971,10 @@ export class Api extends EventEmitter {
    * @param  {any}  onUploadProgress
    * @param  {any}  signal
    * @param  {any}  projectId
+   * @param  {string}  imageIdentifier
    * @return {Promise}
    */
-  async upload(blob, onUploadProgress, signal?, projectId?): Promise<void> {
+  async upload(blob, onUploadProgress, signal?, fileIdentifier?, projectId?): Promise<void> {
     let host, port
     const token = this.getToken()
 
@@ -1007,8 +1025,11 @@ export class Api extends EventEmitter {
       if (projectId) {
         formData.set('projectId', projectId)
       }
-      formData.set('media', blob)
+      if (fileIdentifier) {
+        formData.set('imageIdentifier', fileIdentifier)
+      }
 
+      formData.set('media', blob)
       request.setRequestHeader('Authorization', `Bearer ${token}`)
 
       request.send(formData)

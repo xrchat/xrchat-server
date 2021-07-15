@@ -43,7 +43,7 @@ export default class GroundPlaneNode extends EditorNodeMixin(GroundPlane) {
     this.walkable = source.walkable
     return this
   }
-  serialize() {
+  async serialize(projectID) {
     const components = {
       'ground-plane': {
         color: this.color
@@ -55,7 +55,7 @@ export default class GroundPlaneNode extends EditorNodeMixin(GroundPlane) {
     if (this.walkable) {
       ;(components as any).walkable = {}
     }
-    return super.serialize(components)
+    return await super.serialize(projectID, components)
   }
   prepareForExport() {
     super.prepareForExport()

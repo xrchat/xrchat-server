@@ -20,14 +20,17 @@ const mapProjectSaveData = () => {
   return (context: HookContext): HookContext => {
     context.data.ownedFileId = context.data.project.project_file_id
     context.data.name = context.data.project.name
-    context.data.thumbnailOwnedFileId = context.data.project.thumbnail_file_id
+    context.data.ownedUploadedFiles = {}
+    Object.values(context.data.project.ownedUploadedFiles).forEach((value, index) => {
+      context.data.ownedUploadedFiles[index] = value['file_id']
+    })
     return context
   }
 }
 
 const validateCollectionData = () => {
   return async (context: HookContext): Promise<HookContext> => {
-    if (!context?.data?.ownedFileId || !context?.data?.name || !context?.data?.thumbnailOwnedFileId) {
+    if (!context?.data?.ownedFileId || !context?.data?.name || context?.data?.ownedUploadedFiles == {}) {
       return await Promise.reject(new BadRequest('Project Data is required!'))
     }
     return context

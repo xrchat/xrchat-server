@@ -17,6 +17,8 @@ import {
 import EditorNodeMixin from './EditorNodeMixin'
 import { envmapPhysicalParsReplace, worldposReplace } from './helper/BPCEMShader'
 import CubemapCapturer from './helper/CubemapCapturer'
+import { convertCubemapToEquiImageData, downloadImage } from './helper/ImageUtils'
+import SkyboxNode from './SkyboxNode'
 
 export enum ReflectionProbeTypes {
   'Realtime',
@@ -30,14 +32,13 @@ export enum ReflectionProbeRefreshTypes {
 
 export type ReflectionProbeSettings = {
   probePosition: Vector3
-  probePositionOffset: Vector3
-  probeScale: Vector3
+  probePositionOffset?: Vector3
+  probeScale?: Vector3
   reflectionType: ReflectionProbeTypes
-  intensity: number
   resolution: number
   refreshMode: ReflectionProbeRefreshTypes
-  envMapID: string
-  lookupName: any
+  envMapOrigin: string
+  boxProjection: boolean
 }
 
 export default class ReflectionProbeNode extends EditorNodeMixin(Object3D) {
@@ -58,11 +59,10 @@ export default class ReflectionProbeNode extends EditorNodeMixin(Object3D) {
       probePositionOffset: new Vector3(0),
       probeScale: new Vector3(1, 1, 1),
       reflectionType: ReflectionProbeTypes.Baked,
-      intensity: 1,
       resolution: 512,
       refreshMode: ReflectionProbeRefreshTypes.OnAwake,
-      envMapID: '',
-      lookupName: ''
+      envMapOrigin: '',
+      boxProjection: true
     }
     this.gizmo = new BoxHelper(new Mesh(new BoxBufferGeometry()), 0xff0000)
     this.centerBall.material = new MeshPhysicalMaterial({
@@ -70,28 +70,32 @@ export default class ReflectionProbeNode extends EditorNodeMixin(Object3D) {
       metalness: 1,
       envMapIntensity: 10
     })
-
     this.add(this.gizmo)
+    this.editor.scene.registerEnvironmentMapNode(this)
+  }
 
-    this.editor.scene.registerEnvironmentMapNodes(this)
+  static canAddNode(editor) {
+    return editor.scene.findNodeByType(ReflectionProbeNode) === null
   }
 
   async captureCubeMap() {
     const sceneToBake = this.getSceneForBaking(this.editor.scene)
     const cubemapCapturer = new CubemapCapturer(
-      this.editor,
+      this.editor.renderer.renderer,
       sceneToBake,
-      this.reflectionProbeSettings.resolution,
-      this.reflectionProbeSettings.envMapID
+      this.reflectionProbeSettings.resolution
     )
-    const result = await cubemapCapturer.update(this.position)
-    this.currentEnvMap = result.cubeRenderTarget
-    this.reflectionProbeSettings.envMapID = result.envMapID
+    const result = cubemapCapturer.update(this.position)
+    const imageData = (await convertCubemapToEquiImageData(this.editor.renderer.renderer, result, 512, 512, false))
+      .imageData
+    downloadImage(imageData, 'Hello', 512, 512)
+    this.currentEnvMap = result
     this.injectShader()
+    return result
   }
 
   Bake = () => {
-    this.captureCubeMap()
+    return this.captureCubeMap()
   }
 
   onChange() {
@@ -100,9 +104,6 @@ export default class ReflectionProbeNode extends EditorNodeMixin(Object3D) {
       new Quaternion(0),
       this.reflectionProbeSettings.probeScale
     )
-    this.editor.scene.traverse((child) => {
-      if (child.material) child.material.envMapIntensity = this.reflectionProbeSettings.intensity
-    })
     //this.editor.scene.environment=this.visible?this.currentEnvMap?.texture:null;
   }
 
@@ -123,13 +124,13 @@ export default class ReflectionProbeNode extends EditorNodeMixin(Object3D) {
     })
   }
 
-  serialize() {
+  async serialize(projectID) {
     let data: any = {}
     this.reflectionProbeSettings.probePosition = this.position
     data = {
       options: this.reflectionProbeSettings
     }
-    return super.serialize({ reflectionprobe: data })
+    return await super.serialize(projectID, { reflectionprobe: data })
   }
 
   static async deserialize(editor, json) {
@@ -163,6 +164,9 @@ export default class ReflectionProbeNode extends EditorNodeMixin(Object3D) {
         o.traverse((child) => {
           //disable specular highlights
           ;(child as any).material && ((child as any).material.roughness = 1)
+          if ((child as any).isNode) {
+            if (child.constructor === SkyboxNode) sceneToBake.background = this.editor.scene.background
+          }
         })
         sceneToBake.add(o)
       }

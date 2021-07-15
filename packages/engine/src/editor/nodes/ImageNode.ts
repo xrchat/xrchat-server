@@ -73,8 +73,8 @@ export default class ImageNode extends EditorNodeMixin(Image) {
     this._canonicalUrl = source._canonicalUrl
     return this
   }
-  serialize() {
-    return super.serialize({
+  async serialize(projectID) {
+    return await super.serialize(projectID, {
       image: {
         src: this._canonicalUrl,
         controls: this.controls,

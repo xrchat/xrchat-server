@@ -233,8 +233,8 @@ export default class FloorPlanNode extends EditorNodeMixin(FloorPlan) {
     this.forceTrimesh = source.forceTrimesh
     return this
   }
-  serialize() {
-    return super.serialize({
+  async serialize(projectID) {
+    return await super.serialize(projectID, {
       'floor-plan': {
         autoCellSize: this.autoCellSize,
         cellSize: this.cellSize,

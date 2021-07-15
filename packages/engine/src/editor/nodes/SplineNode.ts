@@ -47,11 +47,11 @@ export default class SplineNode extends EditorNodeMixin(Object3D) {
     super.copy(source, false)
     console.log('COPY')
   }
-  serialize() {
+  async serialize(projectID) {
     console.log('SERIALIZE')
     const splineExportInfo = this.helper.exportSpline()
     console.log(splineExportInfo)
-    return super.serialize({
+    return await super.serialize(projectID, {
       spline: {
         splinePositions: splineExportInfo
       }

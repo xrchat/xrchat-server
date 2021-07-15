@@ -61,8 +61,8 @@ export default class TriggerVolumeNode extends EditorNodeMixin(Object3D) {
     this.leaveValue = source.leaveValue
     return this
   }
-  serialize() {
-    return super.serialize({
+  async serialize(projectID) {
+    return await super.serialize(projectID, {
       'trigger-volume': {
         target: this.target,
         enterComponent: this.enterComponent,

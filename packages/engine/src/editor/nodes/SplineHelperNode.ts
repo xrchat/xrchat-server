@@ -73,8 +73,8 @@ export default class SplineHelperNode extends EditorNodeMixin(Object3D) {
   //   }
   //   return this;
   // }
-  // serialize() {
-  //   return super.serialize({
+  // async serialize(projectID) {
+  //   return await super.serialize(projectID,{
   //     "point-light": {
   //       color: this.color,
   //       intensity: this.intensity,

@@ -50,8 +50,8 @@ export default class SpawnPointNode extends EditorNodeMixin(Object3D) {
     this.helperModel.scale.set(1 / this.scale.x, 1 / this.scale.y, 1 / this.scale.z)
   }
 
-  serialize() {
-    return super.serialize({
+  async serialize(projectID) {
+    return await super.serialize(projectID, {
       'spawn-point': {}
     })
   }

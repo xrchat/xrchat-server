@@ -33,12 +33,12 @@ export default class PostProcessingNode extends EditorNodeMixin(PostProcessing) 
     PostProcessingNode.postProcessingCallback(this)
   }
 
-  serialize() {
+  async serialize(projectID) {
     let data: any = {}
     data = {
       options: this.postProcessingOptions
     }
-    return super.serialize({ postprocessing: data })
+    return await super.serialize(projectID, { postprocessing: data })
   }
 
   onChange() {

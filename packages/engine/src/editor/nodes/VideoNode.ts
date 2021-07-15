@@ -156,8 +156,8 @@ export default class VideoNode extends EditorNodeMixin(Video) {
     this._canonicalUrl = source._canonicalUrl
     return this
   }
-  serialize(): any {
-    return super.serialize({
+  async serialize(projectID) {
+    return await super.serialize(projectID, {
       video: {
         src: this._canonicalUrl,
         interactable: this.interactable,

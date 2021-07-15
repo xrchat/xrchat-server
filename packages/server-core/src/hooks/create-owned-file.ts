@@ -16,9 +16,9 @@ export default () => {
         : config.server.localStorageProvider
 
     let savedFile
-    if (body.projectId && context.params.thumbnailOwnedFileId) {
+    if (body.projectId && context.params.imageIdentifier) {
       // Update File instead of creating a new one if project exists to avoid orphan resources
-      savedFile = await context.app.service('static-resource').patch(context.params.thumbnailOwnedFileId, {
+      savedFile = await context.app.service('static-resource').patch(context.params.imageIdentifier, {
         url: data.uri || data.url,
         key: (data.uri || data.url).replace(`https://${domain}/`, '')
       })
