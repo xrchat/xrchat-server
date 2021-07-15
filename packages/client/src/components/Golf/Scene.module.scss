@@ -1,0 +1,31 @@
+.overlay{
+    display:block;
+    position:fixed;
+    top:0;
+    width: 100%;
+    left: 0;
+    height:100%;
+    background-color: rgba(0,0,0,0.95);
+    z-index: 5000;    
+    .hintContainer{
+        position: fixed;
+        top:60%;
+        left:48%;
+        color:#FFFFFF;
+        font-weight:bold;
+        .keyItem{
+            background-color: rgba(0,0,0,0.6);
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(102,185,51,0.5);
+            box-sizing: border-box;
+            display: inline-block;
+            height: 2em;
+            line-height: 2em;
+            margin: 3px;
+            min-width: 2em;
+            padding: 0px 5px;
+            text-align: center;
+            text-transform: capitalize;
+        }
+    }
+}

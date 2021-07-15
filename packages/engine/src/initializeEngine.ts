@@ -36,7 +36,7 @@ import { isMobile } from './common/functions/isMobile'
 import { ServerNetworkIncomingSystem } from './networking/systems/ServerNetworkIncomingSystem'
 import { ServerNetworkOutgoingSystem } from './networking/systems/ServerNetworkOutgoingSystem'
 import { ServerSpawnSystem } from './scene/systems/ServerSpawnSystem'
-import { SceneObjectSystem } from '@xrengine/engine/src/scene/systems/SceneObjectSystem'
+import { SceneObjectSystem } from './scene/systems/SceneObjectSystem'
 import { ActiveSystems, System } from './ecs/classes/System'
 import { FontManager } from './ui/classes/FontManager'
 import { AudioSystem } from './audio/systems/AudioSystem'
@@ -286,6 +286,10 @@ export const initializeEngine = async (initOptions: InitializeOptions): Promise<
   } else if (options.type === EngineSystemPresets.SERVER) {
     await configureServer(options)
   }
+
+  options.systems?.forEach(({ system, args }) => {
+    registerSystem(system, args)
+  })
 
   // Initialize all registered systems
   await Promise.all(Engine.systems.map((system) => system.initialize()))

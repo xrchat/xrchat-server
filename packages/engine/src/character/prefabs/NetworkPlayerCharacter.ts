@@ -165,7 +165,7 @@ export function createNetworkPlayer(args: {
   networkId?: number
   entity?: Entity
 }): NetworkObject {
-  console.log(args)
+  console.log('createNetworkPlayer', args)
   const position = new Vector3()
   const rotation = new Quaternion()
   if (args.parameters) {

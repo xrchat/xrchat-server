@@ -8,6 +8,7 @@ import { Entity } from '../../../../ecs/classes/Entity'
 import { addComponent, getComponent, getMutableComponent } from '../../../../ecs/functions/EntityFunctions'
 import { Network } from '../../../../networking/classes/Network'
 import { NetworkObject } from '../../../../networking/components/NetworkObject'
+import { NetworkObjectOwner } from '../../../../networking/components/NetworkObjectOwner'
 import { initializeNetworkObject } from '../../../../networking/functions/initializeNetworkObject'
 import { NetworkPrefab } from '../../../../networking/interfaces/NetworkPrefab'
 import { ColliderComponent } from '../../../../physics/components/ColliderComponent'
@@ -19,7 +20,9 @@ import { PhysicsSystem } from '../../../../physics/systems/PhysicsSystem'
 import { Object3DComponent } from '../../../../scene/components/Object3DComponent'
 import { TransformComponent } from '../../../../transform/components/TransformComponent'
 import { GameObject } from '../../../components/GameObject'
+import { GamePlayer } from '../../../components/GamePlayer'
 import { getGame } from '../../../functions/functions'
+import { GolfBallComponent } from '../components/GolfBallComponent'
 import { GolfCollisionGroups, GolfPrefabTypes } from '../GolfGameConstants'
 
 /**
@@ -102,10 +105,6 @@ function assetLoadCallback(group: Group, ballEntity: Entity) {
 export const initializeGolfBall = (ballEntity: Entity) => {
   // its transform was set in createGolfBallPrefab from parameters (its transform Golf Tee);
   const transform = getComponent(ballEntity, TransformComponent)
-  const networkObject = getComponent(ballEntity, NetworkObject)
-  const ownerNetworkObject = Object.values(Network.instance.networkObjects).find((obj) => {
-    return obj.ownerId === networkObject.ownerId
-  }).component
 
   if (isClient) {
     AssetLoader.load(
@@ -189,6 +188,12 @@ export const createGolfBallPrefab = (args: {
             ),
             scale: new Vector3().setScalar(golfBallRadius)
           }
+        },
+        {
+          type: NetworkObjectOwner,
+          data: {
+            networkId: args.parameters.ownerNetworkId
+          }
         }
       ]
     }
@@ -204,7 +209,9 @@ export const GolfBallPrefab: NetworkPrefab = {
     { type: TransformComponent },
     { type: ColliderComponent },
     { type: RigidBodyComponent },
-    { type: GameObject }
+    { type: GameObject },
+    { type: NetworkObjectOwner },
+    { type: GolfBallComponent }
     // Local player input mapped to behaviors in the input map
   ],
   // These are only created for the local player who owns this prefab

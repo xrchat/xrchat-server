@@ -33,6 +33,7 @@ import { ColliderComponent } from '../../physics/components/ColliderComponent'
 import { ColliderHitEvent } from 'three-physx'
 import { isClient } from '../../common/functions/isClient'
 import { checkIsGamePredictionStillRight, clearPredictionCheckList } from '../functions/functionsActions'
+import { NewPlayerTagComponent } from '../templates/Golf/components/GolfTagComponents'
 
 /**
  * @author HydraFire <github.com/HydraFire>
@@ -60,6 +61,14 @@ function isPlayerInGameArea(entity, gameArea) {
     p.z < gameArea.max.z &&
     p.z > gameArea.min.z
   return { entity, inGameArea }
+}
+
+type ComplexResult = {
+  behavior: (entity: Entity, args: any, delta: number, entityOther: Entity, time: number, checkersResult: any) => void
+  entity: Entity
+  args: any
+  entityOther: Entity
+  checkersResult: any
 }
 
 /**
@@ -111,7 +120,7 @@ export class GameManagerSystem extends System {
     this.queryResults.gameObjectCollisions?.all?.forEach((entity) => {
       const collider = getComponent(entity, ColliderComponent)
       const gameObject = getComponent(entity, GameObject)
-      collider.body.collisionEvents?.forEach((collisionEvent: ColliderHitEvent) => {
+      collider.body?.collisionEvents?.forEach((collisionEvent: ColliderHitEvent) => {
         const otherEntity = collisionEvent.bodyOther.userData as Entity
         if (typeof otherEntity === 'undefined') return
         const otherGameObject = getComponent<GameObject>(otherEntity, GameObject)
@@ -142,7 +151,7 @@ export class GameManagerSystem extends System {
         )
       }
       // MAIN EXECUTE
-      const executeComplexResult = []
+      const executeComplexResult: ComplexResult[] = []
       // its case beter then this.queryResults.gameObject.all, becose its sync execute all role groubs entity, and you not think about behavior do work on haotic case
       Object.keys(gamePlayers)
         .concat(Object.keys(gameObjects))
@@ -261,37 +270,38 @@ export class GameManagerSystem extends System {
 
       // GAME AREA ADDIND PLAYERS or REMOVE
       // adding or remove players from this Game, always give the first Role from GameSchema
-      if (this.updateLastTime > this.updateNewPlayersRate) {
-        Object.keys(Network.instance.networkObjects)
-          .map(Number)
-          .filter((key) => Network.instance.networkObjects[key].prefabType === PrefabType.Player)
-          .map((key) => Network.instance.networkObjects[key].component.entity)
-          .map((entity) => isPlayerInGameArea(entity, gameArea))
-          .forEach((v) => {
-            // is Player in Game Area
-            if (v.inGameArea && hasComponent(v.entity, GamePlayer)) {
-              /*
+      // if (this.updateLastTime > this.updateNewPlayersRate) {
+      Object.keys(Network.instance.networkObjects)
+        .map(Number)
+        .filter((key) => Network.instance.networkObjects[key].prefabType === PrefabType.Player)
+        .map((key) => Network.instance.networkObjects[key].component.entity)
+        .map((entity) => isPlayerInGameArea(entity, gameArea))
+        .forEach((v) => {
+          // is Player in Game Area
+          if (v.inGameArea && hasComponent(v.entity, GamePlayer)) {
+            /*
               if (getComponent(v.entity, GamePlayer).gameName != game.name) {
                 getGameFromName(getComponent(v.entity, GamePlayer).gameName).priority < game.priority;
                 removeComponent(v.entity, GamePlayer);
               }
               */
-            } else if (v.inGameArea && !hasComponent(v.entity, GamePlayer)) {
-              addComponent(v.entity, GamePlayer, {
-                gameName: game.name,
-                role: Object.keys(gameSchema.gamePlayerRoles)[0],
-                uuid: getComponent(v.entity, NetworkObject).ownerId
-              })
-            } else if (!v.inGameArea && hasComponent(v.entity, GamePlayer)) {
-              if (getComponent(v.entity, GamePlayer).gameName === game.name) {
-                removeComponent(v.entity, GamePlayer)
-              }
+          } else if (v.inGameArea && !hasComponent(v.entity, GamePlayer)) {
+            addComponent(v.entity, GamePlayer, {
+              gameName: game.name,
+              role: Object.keys(gameSchema.gamePlayerRoles)[0],
+              uuid: getComponent(v.entity, NetworkObject).ownerId
+            })
+            addComponent(v.entity, NewPlayerTagComponent)
+          } else if (!v.inGameArea && hasComponent(v.entity, GamePlayer)) {
+            if (getComponent(v.entity, GamePlayer).gameName === game.name) {
+              removeComponent(v.entity, GamePlayer)
             }
-          })
-        this.updateLastTime = 0
-      } else {
-        this.updateLastTime += 1
-      }
+          }
+        })
+      //   this.updateLastTime = 0
+      // } else {
+      //   this.updateLastTime += 1
+      // }
       // end of frame circle one game
     })
 

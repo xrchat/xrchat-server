@@ -6,6 +6,7 @@ import { InputSchema } from './input/interfaces/InputSchema'
 import { NetworkSchema } from './networking/interfaces/NetworkSchema'
 import { GameMode } from './game/types/GameMode'
 import { PhysXConfig } from 'three-physx'
+import { SystemConstructor } from './ecs/classes/System'
 
 export enum EngineSystemPresets {
   CLIENT,
@@ -39,6 +40,12 @@ export type InitializeOptions = {
     physicsWorldConfig?: PhysXConfig
     physxWorker?: any
   }
+  systems?: [
+    {
+      system: SystemConstructor<any>
+      args?: any
+    }
+  ]
 }
 
 /**

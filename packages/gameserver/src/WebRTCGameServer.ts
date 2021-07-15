@@ -7,6 +7,7 @@ import { NetworkSchema } from '@xrengine/engine/src/networking/interfaces/Networ
 import config from '@xrengine/server-core/src/appconfig'
 import { SocketWebRTCServerTransport } from './SocketWebRTCServerTransport'
 import { EngineSystemPresets, InitializeOptions } from '@xrengine/engine/src/initializationOptions'
+import { GolfSystem } from '../../engine/src/game/templates/Golf/GolfSystem'
 ;(globalThis as any).XMLHttpRequest = XMLHttpRequest
 
 const currentPath = (process.platform === 'win32' ? 'file:///' : '') + path.dirname(__filename)
@@ -20,7 +21,14 @@ const options: InitializeOptions = {
   publicPath: config.client.url,
   physics: {
     physxWorker: new Worker(currentPath + '/physx/loadPhysXNode.ts')
-  }
+  },
+  // TEMPORARY - this shouldn't affect overlay stuff at all
+  systems: [
+    {
+      system: GolfSystem,
+      args: { priority: 6 }
+    }
+  ]
 }
 
 export class WebRTCGameServer {
